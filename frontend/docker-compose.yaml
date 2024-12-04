@@ -1,0 +1,20 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: izdrail/kidzsecurity.com:latest
+    container_name: kidzsecurity.com
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+    command: npm run dev
+    networks:
+      - business.izdrail.com
+networks:
+  business.izdrail.com:
+    driver: bridge

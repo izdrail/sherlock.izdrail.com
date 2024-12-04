@@ -1,0 +1,10 @@
+{
+  "name": "Social Guardian",
+  "author": "Stefan Bogdan",
+  "version": "0.0.1",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "vue-vite",
+  "proxy": "http://localhost:8003"
+}

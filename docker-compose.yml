@@ -1,0 +1,17 @@
+services:
+  security.izdrail.com:
+    build:
+      context: .
+    container_name: security.izdrail.com
+    image: izdrail/security.izdrail.com:latest
+    restart: always
+    ports:
+      - "10000:10000"   # Backend service port
+      - "10001:10001"   # Frontend service port      
+      - "10002:10002"   # Frontend service port       - 
+    volumes:
+      - ./app:/home/app
+      - ./frontend:/home/frontend
+    environment:
+      - CLOUDFLARE_ACCOUNT_ID=e2fa0631e7c2fafc79e68a70a5968569
+      - CLOUDFLARE_API_KEY=av76jm154SuiQ8wu_4Nm_5tjQRjTB-u2RRJZ_nsS
