@@ -1,11 +1,11 @@
 {
   "name": "Security App",
-  "author": "Stefan Bogdan",
+  "author": "Stefan Bogdanel",
   "description": "A mobile application for any device to help prevent cybercrime by providing an interface where you can search for domains, phone numbers and IP addresses.",
   "version": "0.0.2",
   "integrations": {
     "capacitor": {}
   },
   "type": "vue-vite",
-  "proxy": "http://localhost:8003"
+  "proxy": "http://localhost:10000"
 }

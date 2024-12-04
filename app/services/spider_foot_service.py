@@ -15,6 +15,8 @@ class SpiderFootAPI:
     SCAN_LIST = f"{BASE_URL}/scanlist"
     SCAN_OPTIONS = f"{BASE_URL}/scanopts?id="
     SCAN_GRAPHICS = f"{BASE_URL}/scanviz?id="
+    STOP_SCAN = f"{BASE_URL}/stopscan?id="
+    DELETE_SCAN = f"{BASE_URL}/scandelete?id="
     SCAN_EVENTS = f"{BASE_URL}/scanexportjsonmulti?ids="
 
 
@@ -35,6 +37,22 @@ class SpiderFootService:
         if response.status_code != 200:
             raise HTTPException(status_code=response.status_code, detail="Failed to start scan")
         return response.json()
+
+    @staticmethod 
+    def stop_scan(scan_id: str) -> Dict[str, Any]:
+        response = requests.get(SpiderFootAPI.STOP_SCAN + scan_id,  headers=HEADERS)
+        print(response.status_code)
+        if response.status_code != 200:
+            raise HTTPException(status_code=response.status_code, detail="Failed to stop scan")
+        return response.json()
+
+    @staticmethod 
+    def delete_scan(scan_id: str) -> Dict[str, Any]:
+        response = requests.get(SpiderFootAPI.DELETE_SCAN + scan_id,  headers=HEADERS)
+        print(response.status_code)
+        if response.status_code != 200:
+            raise HTTPException(status_code=response.status_code, detail="Failed to delete scan with status code " + str(response.status_code))
+        return {success: "SUCCESS", scan_id: scan_id, content: response.content}
 
     @staticmethod
     def get_scan_list() -> List[Dict[str, Any]]:

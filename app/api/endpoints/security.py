@@ -54,18 +54,26 @@ async def scan(request: ScanRequest):
     )
 
 
-@router.post("/security/scan/stop", response_model=ScanResponseDTO)
+@router.post("/security/scan/stop")
 @version(1)
 async def scan(request: ScanRequest):
-    # Start Scan
-    result = SpiderFootService.start_scan(request.target)
+    # Stop Scan
+    result = SpiderFootService.stop_scan(request.target)
     # Return Response
-    return ScanResponseDTO(
-        target=request.target,
-        scanId=result[1],
-        status=result[0],
-        events={"status": result[0], "id": result[1]},
-    )
+    return result.json()
+
+
+
+
+@router.post("/security/scan/delete")
+@version(1)
+async def scan(request: ScanRequest):
+    # Stop Scan
+    result = SpiderFootService.delete_scan(request.target)
+    # Return Response
+    return result.json()
+
+
 
 
 @router.get("/security/scan/list", response_model=ScanListDTO)
