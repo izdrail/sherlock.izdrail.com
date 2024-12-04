@@ -3,6 +3,7 @@ from http.client import HTTPException
 from typing import Optional
 
 from fastapi import APIRouter, Depends
+from fastapi_versioning import VersionedFastAPI, version
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import Session
 
@@ -40,6 +41,7 @@ EXCLUDED_ENTITY_TYPES = {"PERCENT", "MONEY", "QUANTITY", "ORDINAL", "CARDINAL"}
 
 
 @router.post("/security/scan", response_model=ScanResponseDTO)
+@version(1)
 async def scan(request: ScanRequest):
     # Start Scan
     result = SpiderFootService.start_scan(request.target)
@@ -53,6 +55,7 @@ async def scan(request: ScanRequest):
 
 
 @router.post("/security/scan/stop", response_model=ScanResponseDTO)
+@version(1)
 async def scan(request: ScanRequest):
     # Start Scan
     result = SpiderFootService.start_scan(request.target)
@@ -66,6 +69,7 @@ async def scan(request: ScanRequest):
 
 
 @router.get("/security/scan/list", response_model=ScanListDTO)
+@version(1)
 async def scan_list():
     result = SpiderFootService.get_scan_list()
     print(result)
@@ -94,6 +98,7 @@ async def scan_list():
 
 
 @router.post("/security/scan/options", response_model=ScanOptionsDTO)
+@version(1)
 async def scan_options(request: CheckScan):
     result = SpiderFootService.get_scan_options(request.scanId)
     return ScanOptionsDTO(
@@ -104,6 +109,7 @@ async def scan_options(request: CheckScan):
 
 
 @router.post("/security/scan/graphic", response_model=ScanGraphicsDTO)
+@version(1)
 async def scan_graphic(request: CheckScan):
     result = SpiderFootService.get_scan_graphics(request.scanId)
     return ScanGraphicsDTO(
@@ -114,6 +120,7 @@ async def scan_graphic(request: CheckScan):
 
 
 @router.post("/security/scan/events")
+@version(1)
 async def scan_events(request: CheckScan):
     result = SpiderFootService.get_scan_events(request.scanId)
     #print(result)
@@ -125,6 +132,7 @@ async def scan_events(request: CheckScan):
 
 # Updated Endpoint
 @router.post("/security/scan/analyze")
+@version(1)
 async def analyze_scan(request: CheckScan):
     """
     Analyze scan results using spaCy for Named Entity Recognition (NER).
@@ -150,6 +158,7 @@ async def analyze_scan(request: CheckScan):
 
 
 @router.get("/security/pocs", response_model=PocResponseDTO)
+@version(1)
 async def get_pocs(
         limit: int = 10,
         cve_id: Optional[str] = None,
@@ -166,6 +175,7 @@ async def get_pocs(
 
 #TODO : Add support for `cve_id`
 @router.get("/security/alerts", response_model=PocResponseDTO)
+@version(1)
 async def get_pocs(
         limit: int = 10,
         cve_id: Optional[str] = None,

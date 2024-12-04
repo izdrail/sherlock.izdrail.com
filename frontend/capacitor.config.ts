@@ -1,8 +1,9 @@
 import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'social.guardian.app',
-  appName: 'Social Guard',
+  appId: 'security.izdrail.com',
+  appName: 'Security',
+  appVersion: '0.0.2',
   webDir: 'dist',
   plugins: {
     BackgroundRunner: {

@@ -1,15 +1,15 @@
 {
-  "name": "social-guardian-app", 
+  "name": "security-izdrail-com", 
   "private": true,
-  "version": "0.0.1",
+  "version": "0.0.2",
   "type": "module",
-  "description": "A mobile application for Android to help prevent cybercrime by providing an interface where you can search for domains, phone numbers and IP addresses.",
+  "description": "A pwa application for Android/Linux/Windows to help prevent cybercrime by providing an interface where you can search for domains, phone numbers and IP addresses.",
   "author": "Stefan Izdrail <stefan@izdrail.com>",
   "license": "Apache-2.0",
   "scripts": {
     "dev": "vite --host 0.0.0.0 --port 10000",
     "build": "vite build",
-    "preview": "vite preview",
+    "preview": "vite preview --host 0.0.0.0 --port 10000",
     "test:e2e": "cypress run",
     "test:unit": "vitest",
     "lint": "eslint ."

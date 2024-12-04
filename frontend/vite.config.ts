@@ -27,7 +27,7 @@ export default defineConfig({
         secure: false,
         autoRewrite: true,
         changeOrigin: true,
-        rewrite: (path)  => path.replace(/^\/backend/,  'security'),
+        rewrite: (path)  => path.replace(/^\/backend/,  'v1_0/security'),
       },
     }
   },

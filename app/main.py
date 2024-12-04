@@ -60,6 +60,7 @@ from fastapi.staticfiles import StaticFiles
 
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker, declarative_base
+from fastapi_versioning import VersionedFastAPI, version
 
 from api.endpoints import security
 
@@ -67,7 +68,6 @@ from api.endpoints import security
 app = FastAPI(
     title="Social Guard API",
     description="Protect your family members from the worst possible cyber attacks with Social Guard API",
-    version="0.0.1",
     terms_of_service="https://security.izdrail.com/terms",
     contact={
         "name": "Stefan Bogdanel",
@@ -92,16 +92,11 @@ app.add_middleware(
 # Router inclusion
 app.include_router(security.router)
 
+app = VersionedFastAPI(app,version_format='{major}')
 
-@app.get("/", response_class=HTMLResponse)
-async def root(request: Request):
-    return {}
-
-print("Starting server on port 8003")
-
-if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8003, reload=True)
-
+@app.get("/")
+async def root():
+    return {"message": "Welcome to the Security API! check /v1_0/docs for more information."}
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8003, reload=True)
+    uvicorn.run(app, host="0.0.0.0", port=10001, reload=True)
