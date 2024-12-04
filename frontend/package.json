@@ -7,7 +7,7 @@
   "author": "Stefan Izdrail <stefan@izdrail.com>",
   "license": "Apache-2.0",
   "scripts": {
-    "dev": "vite --host 0.0.0.0 --port 8000",
+    "dev": "vite --host 0.0.0.0 --port 10000",
     "build": "vite build",
     "preview": "vite preview",
     "test:e2e": "cypress run",

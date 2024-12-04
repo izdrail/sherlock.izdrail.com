@@ -10,8 +10,8 @@ from sqlalchemy.orm import sessionmaker, declarative_base
 from api.endpoints import security
 
 app = FastAPI(
-    title="Social Guard API",
-    description="Protect your family members from the worst possible cyber attacks with Social Guard API",
+    title="Security App",
+    description="Protect your family members from the worst possible cyber attacks with our o.s.i.n.t. solution",
     version="0.0.1",
     terms_of_service="https://security.izdrail.com/terms",
 
@@ -33,6 +33,7 @@ app.add_middleware(
     allow_headers=["*"],
     allow_credentials=True,
 )
+
 
 # TODO - Simplify and improve code
 

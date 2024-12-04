@@ -8,10 +8,6 @@ const routes: Array<RouteRecordRaw> = [
     redirect: '/investigate'
   },
   {
-    path: '/family',
-    component: () => import ('../views/family/Members.vue')
-  },
-  {
     path: '/investigate',
     component: () => import ('../views/investigate.vue')
   },

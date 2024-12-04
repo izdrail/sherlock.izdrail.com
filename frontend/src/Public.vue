@@ -49,11 +49,6 @@ export default defineComponent({
     return {
       appPages: [
         {
-          title: 'Family',
-          url: '/family',
-          icon: peopleCircleOutline,
-        },
-        {
           title: 'Investigate',
           url: '/investigate',
           icon: footstepsOutline,
