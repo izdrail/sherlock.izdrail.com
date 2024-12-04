@@ -24,8 +24,7 @@
                 </ion-card-header>
                 <ion-card-content>
                   <p><strong>Scan ID:</strong> {{ item.scan_id }}</p>
-                  <p><strong>Scan Name:</strong> {{ item.phone_1 }}</p>
-                  <p><strong>Scan Target:</strong> {{ item.phone_2 }}</p>
+                  <p><strong>Scan Target:</strong> {{ item.scan_target }}</p>
                   <p><strong>Start Time:</strong> {{ item.start_time }}</p>
                   <p><strong>End Time:</strong> {{ item.end_time }}</p>
                   <p><strong>Completion Time:</strong> {{ item.completion_time }}</p>
@@ -99,11 +98,12 @@ const viewReport = (scanID: string) => {
 
 // Handle deleting a report
 const deleteReport = async (scanID: string) => {
-  try {
-    await ScanStorageService.deleteScan(scanID);
+  const result = await ScanManager.deleteScan(scanID);
+  if (result.success === 'SUCCESS') {
     await getResults(); // Refresh the list after deletion
-  } catch (error) {
-    console.error('Error deleting report:', error);
+  } else {  
+    console.error('Error deleting report:', result.data);
+    return;
   }
 };
 

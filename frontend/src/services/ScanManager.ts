@@ -48,6 +48,24 @@ class ScanManager {
     }
   }
 
+  static async deleteScan(scanID: string): Promise<any> {
+    const uri = 'backend/scan/delete';  // Proxy path configured in vite.config.js
+    const formData = {
+      target: scanID,
+    };
+    try {
+      const response = await axios.post(uri, formData, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+      });
+      console.log(response.data);
+      return {status:"SUCCESS"};
+    } catch (error) {
+      throw new Error('Cannot connect to server ' + error + '');
+    }
+  }
   // Get results for a specific scan using GET request
   static async getResults(scanID: string): Promise<any> {
     const url = `osint/scanexportjsonmulti?ids=${scanID}`;

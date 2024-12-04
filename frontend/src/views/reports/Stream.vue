@@ -2,10 +2,10 @@
   <ion-header>
     <ion-toolbar>
       <ion-buttons slot="start">
-        <ion-menu-button color="secondary"></ion-menu-button>
+        <ion-menu-button color="primary"></ion-menu-button>
       </ion-buttons>
       <ion-title>
-        Stream
+        Findings {{ scanID }}
       </ion-title>
     </ion-toolbar>
   </ion-header> 
@@ -31,6 +31,7 @@ import { useRouter } from 'vue-router';
 
 const router = useRouter();
 const results = ref([]);
+const scanID = ref(router.currentRoute.value.params.scanID as string);
 
 const getEvents = async () => {
   const scanID = router.currentRoute.value.params.scanID as string;

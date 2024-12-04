@@ -12,6 +12,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 
 RUN npm install -g vite
+
    
 # Upgrade pip and install supervisord and pipx
 RUN pip install --no-cache-dir --upgrade pip \
@@ -23,7 +24,6 @@ RUN git clone https://github.com/izdrail/spiderfoot.git
 WORKDIR /home/spiderfoot
 RUN pip install -r requirements.txt
 
-Clone and install BBot
 WORKDIR /home
 RUN git clone https://github.com/izdrail/bbot.izdrail.com.git
 RUN pipx install bbot
@@ -41,9 +41,8 @@ RUN pipx install bbot
 WORKDIR /home/app
 COPY app . 
 
-RUN chmod +x /home/app/start.sh \
-    && pip install --no-cache-dir --upgrade -r requirements.txt \
-    && pip install pymupdf4llm python-multipart yake tls_client uvicorn litellm asent spacyfishing\
+RUN pip install --no-cache-dir --upgrade -r requirements.txt \
+    && pip install fastapi-versioning pymupdf4llm python-multipart yake tls_client uvicorn litellm asent spacyfishing\
     && python3 -m nltk.downloader -d /usr/local/share/nltk_data wordnet punkt stopwords vader_lexicon \
     && python3 -m spacy download en_core_web_md \
     && python3 -m textblob.download_corpora
@@ -62,6 +61,7 @@ COPY docker/supervisord.conf /etc/supervisord.conf
 # FRONTEND - TODO: Make this work
 WORKDIR /home/frontend
 COPY frontend /home/frontend/
+
 RUN npm install
 RUN npm run build
 #Now copy to 
