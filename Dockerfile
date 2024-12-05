@@ -10,32 +10,28 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 
+# FRONTEND - TODO: Make this work
 
+COPY frontend /home/frontend/
+COPY frontend/package.json /home/frontend/package.json
+WORKDIR /home/frontend/
+RUN npm install --legacy-peer-deps
+RUN npm run build
 RUN npm install -g vite
+#Now copy to 
 
-   
-# Upgrade pip and install supervisord and pipx
+
+# Upgrade pip and install pipx
 RUN pip install --no-cache-dir --upgrade pip \
-    && pip install pipx
+    && pip install pipx \
+    && pip install poetry \
+    && pip install bbot
 
 # Clone SpiderFoot and install its dependencies
 WORKDIR /home
 RUN git clone https://github.com/izdrail/spiderfoot.git
 WORKDIR /home/spiderfoot
 RUN pip install -r requirements.txt
-
-WORKDIR /home
-RUN git clone https://github.com/izdrail/bbot.izdrail.com.git
-RUN pipx install bbot
-
-# Clone, build, and install Skraper
-# RUN git clone https://github.com/izdrail/skraper.izdrail.com.git
-# WORKDIR /home/skraper.izdrail.com
-# RUN ./mvnw clean package -DskipTests=true \
-#     && mkdir -p /usr/local/skraper \
-#     && cp cli/target/cli.jar /usr/local/skraper/ \
-#     && echo '#!/bin/bash\njava -jar /usr/local/skraper/cli.jar "$@"' > /usr/local/bin/skraper \
-#     && chmod +x /usr/local/bin/skraper
 
 # Set up FastAPI app
 WORKDIR /home/app
@@ -56,15 +52,6 @@ RUN apt-get autoremove -y \
 # Copy Supervisor configuration
 COPY docker/supervisord.conf /etc/supervisord.conf
 #COPY doker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-
-
-# FRONTEND - TODO: Make this work
-WORKDIR /home/frontend
-COPY frontend /home/frontend/
-
-RUN npm install
-RUN npm run build
-#Now copy to 
 
 
 

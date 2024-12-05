@@ -2,7 +2,7 @@
   "name": "Security App",
   "author": "Stefan Bogdanel",
   "description": "A mobile application for any device to help prevent cybercrime by providing an interface where you can search for domains, phone numbers and IP addresses.",
-  "version": "0.0.2",
+  "version": "0.0.1",
   "integrations": {
     "capacitor": {}
   },
