@@ -33,3 +33,11 @@ To run the app locally, you need to have docker installed on your machine.
 3. Run the docker image
 ```docker run -p 10000:10000 izdrail/security.izdrail.com:latest```
 4. Access the frontend at http://localhost:10000
+
+
+## Changelog
+- 2024-12-04: Version 0.0.1 - First release
+
+
+## License
+[MIT](https://choosealicense.com/licenses/mit/)

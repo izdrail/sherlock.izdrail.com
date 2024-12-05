@@ -6,6 +6,7 @@ from fastapi import APIRouter, Depends
 from fastapi_versioning import VersionedFastAPI, version
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import Session
+from bbot.scanner import Scanner
 
 from dto.pocs.alerts_dto import PocResponseDTO
 from dto.scans.scan_dtos import (
@@ -195,3 +196,11 @@ async def get_pocs(
         status=200,
         data=serialized_pocs
     )
+@router.post("/bbot")
+@version(1)
+async def scan(request: ScanRequest):
+    # Stop Scan
+    scan = Scanner(request.target, presets=["subdomain-enum"])
+
+    async for event in scan.async_start():
+        print(event.json())
