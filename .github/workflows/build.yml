@@ -32,4 +32,4 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: true
           tags: |
-            izdrail/security.izdrail.com:latest
+            izdrail/sherlock.izdrail.com:latest

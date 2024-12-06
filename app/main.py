@@ -11,8 +11,8 @@ from api.endpoints import security
 
 # Initialize FastAPI app
 app = FastAPI(
-    title="Security API",
-    description="Protect your family members from the worst possible cyber attacks with Social Guard API",
+    title="Sherlock - OSINT API",
+    description="Protect your family members from the worst possible cyber attacks with Sherlock Guard API",
     terms_of_service="https://izdrail.com/terms",
     contact={
         "name": "Stefan Bogdanel",
@@ -20,7 +20,7 @@ app = FastAPI(
         "email": "stefan@izdrail.com",
     },
     license_info={
-        "name": "Apache 2.0",
+        "name": "CC BY 4.0",
         "url": "https://www.apache.org/licenses/LICENSE-2.0.html",
     }
 )
