@@ -5,7 +5,7 @@
       <ion-menu content-id="main-content" type="overlay">
         <ion-content>
           <ion-col>
-            <img src="./assets/guardian.svg" alt="app logo" />
+            <img src="./assets/logo2.svg" alt="Logo" style="width: 25vw; height: 25vh;"/>
           </ion-col>
           <ion-col >
             <ion-list class="menu-list">

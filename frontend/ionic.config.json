@@ -1,8 +1,10 @@
 {
-  "name": "Security App",
+  "name": "Sherlock",
   "author": "Stefan Bogdanel",
-  "description": "A mobile application for any device to help prevent cybercrime by providing an interface where you can search for domains, phone numbers and IP addresses.",
+  "website": "https://sherlock.izdrail.com",
+  "description": "A web application for any device to help prevent cybercrime by providing an interface where you can search for domains, phone numbers and IP addresses.",
   "version": "0.0.1",
+  "license": "CC BY 4.0",
   "integrations": {
     "capacitor": {}
   },

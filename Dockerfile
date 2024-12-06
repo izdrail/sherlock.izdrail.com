@@ -16,7 +16,7 @@ COPY frontend /home/frontend/
 COPY frontend/package.json /home/frontend/package.json
 WORKDIR /home/frontend/
 RUN npm install --legacy-peer-deps
-RUN npm run build
+
 RUN npm install -g vite
 #Now copy to 
 

@@ -1,9 +1,9 @@
 services:
-  security.izdrail.com:
+  sherlock.izdrail.com:
     build:
       context: .
-    container_name: security.izdrail.com
-    image: izdrail/security.izdrail.com:latest
+    container_name: sherlock.izdrail.com
+    image: izdrail/sherlock.izdrail.com:latest
     restart: always
     ports:
       - "10000:10000"   # Backend service port
@@ -15,3 +15,4 @@ services:
     environment:
       - CLOUDFLARE_ACCOUNT_ID=e2fa0631e7c2fafc79e68a70a5968569
       - CLOUDFLARE_API_KEY=av76jm154SuiQ8wu_4Nm_5tjQRjTB-u2RRJZ_nsS
+      - ZEPTO=

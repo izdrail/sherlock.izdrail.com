@@ -1,8 +1,8 @@
 import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'security.izdrail.com',
-  appName: 'Security',
+  appId: 'sherlock.izdrail.com',
+  appName: 'Sherlock',
   appVersion: '0.0.1',
   webDir: 'dist',
   plugins: {

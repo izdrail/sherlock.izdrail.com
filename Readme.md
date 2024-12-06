@@ -1,4 +1,4 @@
-# Mobile security application - security.izdrail.com
+# Mobile security application - sherlock.izdrail.com
 
 ## Open source OSINT application
 
@@ -26,13 +26,19 @@ I have built a docker image that contains the backend and the frontend.
 To run the app locally, you need to have docker installed on your machine.
 
 1. Clone the repository
-```git clone https://github.com/izdrail/security.izdrail.com.git```
+```git clone https://github.com/izdrail/sherlock.izdrail.com.git```
 2. Build the docker image:
-```docker build -t izdrail/security.izdrail.com:latest .```
+```docker build -t izdrail/sherlock.izdrail.com:latest .```
 
 3. Run the docker image
-```docker run -p 10000:10000 izdrail/security.izdrail.com:latest```
+```docker run -p 10000:10000 izdrail/sherlock.izdrail.com:latest```
 4. Access the frontend at http://localhost:10000
+
+
+
+### Docker
+```docker run -p 10000:10000 izdrail/sherlock.izdrail.com:latest```
+
 
 
 ## Changelog
@@ -40,4 +46,4 @@ To run the app locally, you need to have docker installed on your machine.
 
 
 ## License
-[MIT](https://choosealicense.com/licenses/mit/)
+[ CC BY 4.0](https://creativecommons.org/licenses/by/4.0/deed.en)
