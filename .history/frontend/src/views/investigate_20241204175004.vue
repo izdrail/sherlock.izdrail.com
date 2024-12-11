@@ -45,10 +45,8 @@
         <ion-col class="ion-text-center">
           <p class="success-message">
             Your investigation has been started. Check reports <a :href="`/reports/${scanID}`">{{ scanID }}</a>.
-            <img src="@/assets/run.svg" alt="Success Image" />
           </p>
         </ion-col>
-
       </ion-row>
 
       <ion-row v-if="loading">

@@ -33,14 +33,14 @@
                 <!-- Card Footer for Buttons -->
                 <ion-card-footer>
                   <ion-row class="ion-justify-content-between">
-                    <ion-col size="6">
-                      <ion-button expand="full" color="primary" @click="viewReport(item.scan_id)">
+                    <ion-col size="auto">
+                      <ion-button size="auto" color="primary" @click="viewReport(item.scan_id)">
                         <ion-icon slot="start" :icon="eyeOutline"></ion-icon>
                         View
                       </ion-button>
                     </ion-col>
-                    <ion-col size="6">
-                      <ion-button expand="full" color="danger" @click="deleteReport(item.scan_id)">
+                    <ion-col size="auto">
+                      <ion-button color="danger" @click="deleteReport(item.scan_id)">
                         <ion-icon slot="start" :icon="removeCircle"></ion-icon>
                         <span class="text-warning">Delete</span>
                       </ion-button>

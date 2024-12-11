@@ -34,7 +34,7 @@
                 <ion-card-footer>
                   <ion-row class="ion-justify-content-between">
                     <ion-col size="6">
-                      <ion-button expand="full" color="primary" @click="viewReport(item.scan_id)">
+                      <ion-button size="auto" color="primary" @click="viewReport(item.scan_id)">
                         <ion-icon slot="start" :icon="eyeOutline"></ion-icon>
                         View
                       </ion-button>

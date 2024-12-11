@@ -32,23 +32,21 @@
                 </ion-card-content>
                 <!-- Card Footer for Buttons -->
                 <ion-card-footer>
-                  <ion-row class="ion-justify-content-between">
-                    <ion-col size="6">
-                      <ion-button expand="full" color="primary" @click="viewReport(item.scan_id)">
+                  <ion-row>
+                    <ion-col size="12">
+                      <ion-button expand="block" color="primary" @click="viewReport(item.scan_id)">
                         <ion-icon slot="start" :icon="eyeOutline"></ion-icon>
                         View
                       </ion-button>
                     </ion-col>
-                    <ion-col size="6">
-                      <ion-button expand="full" color="danger" @click="deleteReport(item.scan_id)">
+                    <ion-col size="12">
+                      <ion-button expand="block" color="danger" @click="deleteReport(item.scan_id)">
                         <ion-icon slot="start" :icon="removeCircle"></ion-icon>
                         <span class="text-warning">Delete</span>
                       </ion-button>
                     </ion-col>
-                  </ion-row>
-                  <ion-row v-if="item.status === 'RUNNING'" class="ion-justify-content-center">
-                    <ion-col size="auto">
-                      <ion-button color="warning" @click="stopScan(item.scan_id)">
+                    <ion-col size="12" v-if="item.status === 'RUNNING'">
+                      <ion-button expand="block" color="warning" @click="stopScan(item.scan_id)">
                         <ion-icon slot="start" name="stop-circle-outline"></ion-icon>
                         Stop
                       </ion-button>

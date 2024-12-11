@@ -44,8 +44,8 @@
       <ion-row v-if="scanID">
         <ion-col class="ion-text-center">
           <p class="success-message">
-            Your investigation has been started. Check reports <a :href="`/reports/${scanID}`">{{ scanID }}</a>.
             <img src="@/assets/run.svg" alt="Success Image" />
+            Your investigation has been started. Check reports <a :href="`/reports/${scanID}`">{{ scanID }}</a>.
           </p>
         </ion-col>
 
