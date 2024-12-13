@@ -25,9 +25,9 @@ class SpiderFootService:
     """Service to handle SpiderFoot API interactions."""
 
     @staticmethod
-    def start_scan(target: str) -> Dict[str, Any]:
+    def start_scan(target: str, identifier: str) -> Dict[str, Any]:
         post_data = {
-            "scanname": target,
+            "scanname": identifier,
             "scantarget": target,
             "usecase": "all",
             "modulelist": "",

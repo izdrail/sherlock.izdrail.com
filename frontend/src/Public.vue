@@ -39,7 +39,7 @@
 import VNetworkGraph from "v-network-graph"
 import "v-network-graph/lib/style.css"
 import { IonApp, IonSplitPane, IonMenu, IonContent, IonRouterOutlet } from '@ionic/vue';
-import { analytics, searchOutline, alertCircle,footstepsOutline,peopleCircleOutline,eyeOutline} from 'ionicons/icons';
+import { analytics, fileTrayStackedSharp, alertCircle,footstepsOutline,peopleCircleOutline,eyeOutline} from 'ionicons/icons';
 import { defineComponent } from 'vue';
 const appPages = []
 export default defineComponent({
@@ -54,9 +54,9 @@ export default defineComponent({
           icon: footstepsOutline,
         },
         {
-          title: 'Reports',
+          title: 'Cases',
           url: '/reports',
-          icon: analytics,
+          icon: fileTrayStackedSharp,
         },
         {
           title: 'Alerts',

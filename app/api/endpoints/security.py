@@ -32,6 +32,7 @@ nlp.max_length = 10000000
 # Request Models
 class ScanRequest(BaseModel):
     target: str
+    client: str
 
 
 class CheckScan(BaseModel):
@@ -45,10 +46,11 @@ EXCLUDED_ENTITY_TYPES = {"PERCENT", "MONEY", "QUANTITY", "ORDINAL", "CARDINAL"}
 @version(1)
 async def scan(request: ScanRequest):
     # Start Scan
-    result = SpiderFootService.start_scan(request.target)
+    result = SpiderFootService.start_scan(request.target, request.client)
     # Return Response
     return ScanResponseDTO(
         target=request.target,
+        identifier=request.client,
         scanId=result[1],
         status=result[0],
         events={"status": result[0], "id": result[1]},

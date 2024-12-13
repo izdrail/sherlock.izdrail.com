@@ -5,141 +5,179 @@
         <ion-buttons slot="start">
           <ion-menu-button color="primary"></ion-menu-button>
         </ion-buttons>
-        <ion-title>
-          Run investigation
-        </ion-title>
+        <ion-title>Run Investigation</ion-title>
       </ion-toolbar>
     </ion-header>
-    <ion-content class="ion-padding" :fullscreen="true">
+    
+    <ion-content class="ion-padding">
+      <div class="investigation-container">
+        <!-- Target Input Card -->
+        <ion-card class="target-card">
+          <ion-card-header>
+            <ion-card-title>Start New Investigation</ion-card-title>
+          </ion-card-header>
+          
+          <ion-card-content>
+            <form @submit.prevent="startScan">
+              <ion-grid>
+                <ion-row class="ion-align-items-center">
+                  <ion-col size="12" size-md="10">
+                    <ion-input 
+                      class="target-input" 
+                      color="primary" 
+                      label="Target Details" 
+                      label-placement="floating"
+                      v-model="target" 
+                      required 
+                      fill="outline"
+                      placeholder="Domain, IP, email, username..."
+                    ></ion-input>
+                  </ion-col>
+                  <ion-col size="12" size-md="2">
+                    <ion-button 
+                      type="submit" 
+                      class="search-button"
+                      fill="outline"
+                      size="large"
+                      :disabled="loading"
+                      color="primary"
+                    >
+                      <ion-icon :icon="searchOutline"></ion-icon>
+                    </ion-button>
+                  </ion-col>
+                </ion-row>
+              </ion-grid>
+            </form>
+          </ion-card-content>
+        </ion-card>
 
-      <form @submit.prevent="startScan">
-        <ion-row class="ion-justify-content-center mt-10">
-          <ion-col size="10" style="margin-top: 5px">
-            <ion-input  class="ion-no-border" color="tertiary" label="Type target details" autocomplete="on"
-                       label-placement="floating" v-model="target" required fill="outline"
-                       placeholder="Can be anything..."></ion-input>
-          </ion-col>
-          <ion-col size="2">
-            <div class="ion-activatable ripple-parent rectangle">
-              <ion-ripple-effect></ion-ripple-effect>
-              <ion-button fill="outline" aria-label="Start investigation" type="submit" expand="block" size="large" :disabled="loading" >
+        <!-- Error Handling -->
+        <ion-card v-if="error" class="error-card">
+          <ion-card-content class="ion-text-center">
+            <img 
+              src="../assets/svg/error.svg"
+              class="error-image"
+              alt="Error"
+            />
+            <p class="error-message">{{ error }}</p>
+          </ion-card-content>
+        </ion-card>
 
-                <ion-icon :icon="searchOutline"></ion-icon>
+        <!-- Success Notification -->
+        <ion-card v-if="scanID" class="success-card">
+          <ion-card-content class="ion-text-center">
+            <img src="@/assets/run.svg" alt="Success" class="success-image"/>
+            <p class="success-message">
+              Investigation started. 
+              <ion-button 
+                fill="clear" 
+                color="primary" 
+                :href="`/reports/${scanID}`"
+              >
+                View Report {{ scanID }}
               </ion-button>
-            </div>
-          </ion-col>
-        </ion-row>
-      </form>
+            </p>
+          </ion-card-content>
+        </ion-card>
 
-      <ion-row v-if="error">
-        <ion-col class="ion-text-center">
-          <p class="error-message danger-message">{{ error }}</p>
-          <!-- Show different icons based on the error type -->
-          <img v-if="errorAlreadyScanned" style="width: 250px; height: 250px;" src="../assets/svg/results.svg"
-               alt="Already scanned"/>
-          <img v-else src="../assets/svg/error.svg" style="width: 250px; height: 250px;" alt="Generic error"/>
-        </ion-col>
-      </ion-row>
-
-      <ion-row v-if="scanID">
-        <ion-col class="ion-text-center">
-          <p class="success-message">
-            Your investigation has been started. Check reports <a :href="`/reports/${scanID}`">{{ scanID }}</a>.
-            <img src="@/assets/run.svg" alt="Success Image" />
-          </p>
-        </ion-col>
-
-      </ion-row>
-
-      <ion-row v-if="loading">
-        <ion-col class="ion-text-center">
+        <!-- Loading Spinner -->
+        <div v-if="loading" class="loading-container">
           <ion-spinner name="crescent" color="primary"/>
-        </ion-col>
-      </ion-row>
-
-      <ion-row v-if="helper">
-        <ion-col class="ion-text-center" size="12">
-          <i class="glyphicon glyphicon-question-sign"></i>
-          Your scan target may be one of the following: domain name, IPv4 address, hostname/subdomain, subnet, Bitcoin
-          address, e-mail address, phone number, human name, or username.
-        </ion-col>
-      </ion-row>
-
-
+        </div>
+      </div>
     </ion-content>
   </ion-page>
 </template>
 
 <script setup lang="ts">
-import {onMounted, ref} from 'vue';
+import { ref } from 'vue';
 import ScanManager from '../services/ScanManager';
-import ScanStorageService from '../services/ScanStorageService';
 import {
-  IonButton, IonButtons,
-  IonCol,
-  IonContent,
-  IonHeader, IonIcon,
-  IonInput,
-  IonMenuButton,
-  IonPage,
-  IonRow,
-  IonRippleEffect,
-  IonSpinner,
-  IonTitle,
-  IonToolbar
+  IonButton, IonButtons, IonCard, IonCardContent, 
+  IonCardHeader, IonCardTitle, IonCol, IonContent, 
+  IonGrid, IonHeader, IonIcon, IonInput, 
+  IonMenuButton, IonPage, IonRow, IonSpinner, 
+  IonTitle, IonToolbar
 } from '@ionic/vue';
-import {
-  searchOutline,
-} from 'ionicons/icons';
+import { searchOutline } from 'ionicons/icons';
 
 const target = ref('');
 const loading = ref(false);
 const error = ref('');
-const errorAlreadyScanned = ref(false);
-const helper = ref(true);
 const scanID = ref('');
 
 const startScan = async () => {
+  // Validate input
   if (!target.value.trim()) {
     error.value = 'Please enter a valid target.';
-    errorAlreadyScanned.value = false; // Clear the scanned error flag
     return;
   }
 
+  // Reset previous states
   error.value = '';
-  errorAlreadyScanned.value = false; // Reset error state
   loading.value = true;
-  helper.value = false;
 
   try {
-    // Check if the target has been scanned previously
-    const previousScan = await ScanStorageService.getScanByTarget(target.value);
-    if (previousScan) {
-      scanID.value = previousScan.scanID;
-      error.value = `This target has already been scanned. Check the results for ${previousScan.query}.`;
-      errorAlreadyScanned.value = true; // Set scanned error flag
-      loading.value = false;
-      return;
-    }
-
-    // Perform a new scan if no previous scan exists
+    // Perform scan
     const response = await ScanManager.performScan(target.value);
+    
     if (response.success === "SUCCESS") {
       scanID.value = response.scanID;
-      await ScanStorageService.saveScan(target.value, scanID.value, response);
-      error.value = '';
     } else {
       error.value = response.data?.error || 'An unknown error occurred.';
     }
   } catch (err) {
     error.value = `An error occurred: ${err.message}`;
-    errorAlreadyScanned.value = false; // Generic error
   } finally {
     loading.value = false;
   }
 };
-
-onMounted(async () => {
-  console.log('App has been mounted...');
-});
 </script>
+
+<style scoped>
+.investigation-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin: 0 auto;
+}
+
+.target-card,
+.error-card,
+.success-card {
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.target-input {
+  font-size: 1rem;
+}
+
+.error-image,
+.success-image {
+  max-width: 250px;
+  height: 250px;
+  margin: 16px 0;
+}
+
+.error-message {
+  color: var(--ion-color-danger);
+  font-weight: bold;
+}
+
+.success-message {
+  color: var(--ion-color-primary);
+}
+
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+}
+
+.search-button {
+  width: 100%;
+  color: var(--ion-color-medium-shade);
+}
+</style>

@@ -3,6 +3,8 @@
 import vue from '@vitejs/plugin-vue'
 import path from 'path'
 import { defineConfig } from 'vite'
+import { VitePWA } from 'vite-plugin-pwa';
+import { Device } from '@capacitor/device';
 
 
 //
@@ -10,6 +12,7 @@ export default defineConfig({
 
   plugins: [
     vue(),
+    VitePWA({ registerType: 'autoUpdate' })
   ],
   server: {
     proxy: {

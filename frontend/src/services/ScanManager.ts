@@ -1,12 +1,14 @@
 import axios from 'axios';
-
+import { Device } from '@capacitor/device';
 
 class ScanManager {
 
   static async performScan(target: string): Promise<any> {
+    const id = await Device.getId();
     const uri = 'backend/scan';  // Proxy path configured in vite.config.js
     const formData = {
       target: target,
+      client: id.identifier
     };
     try {
       const response = await axios.post(uri, formData, {

@@ -5,9 +5,7 @@
         <ion-buttons slot="start">
           <ion-menu-button color="primary"></ion-menu-button>
         </ion-buttons>
-        <ion-title>
-          Reports
-        </ion-title>
+        <ion-title>Cases</ion-title>
       </ion-toolbar>
     </ion-header>
 
@@ -18,38 +16,41 @@
         <ion-col size="12" v-else-if="results.length > 0">
           <ion-row>
             <ion-col size-md="6" size-lg="12" v-for="(item, index) in results" :key="index">
-              <ion-card>
+              <ion-card :class="getCardColor(item.status)">
                 <ion-card-header>
                   <ion-card-title>Status: {{ item.status }}</ion-card-title>
                 </ion-card-header>
                 <ion-card-content>
-                  <p><strong>Scan ID:</strong> {{ item.scan_id }}</p>
-                  <p><strong>Scan Target:</strong> {{ item.scan_target }}</p>
+                  <p><strong>Case Number:</strong> {{ item.scan_id }}</p>
+                  <p><strong>Target:</strong> {{ item.scan_value }}</p>
                   <p><strong>Start Time:</strong> {{ item.start_time }}</p>
                   <p><strong>End Time:</strong> {{ item.end_time }}</p>
                   <p><strong>Completion Time:</strong> {{ item.completion_time }}</p>
                   <p><strong>Risk Score:</strong> {{ item.risk_score }}</p>
                 </ion-card-content>
-                <!-- Card Footer for Buttons -->
                 <ion-card-footer>
                   <ion-row class="ion-justify-content-between">
                     <ion-col size="6">
-                      <ion-button expand="full" color="primary" @click="viewReport(item.scan_id)">
+                      <ion-button 
+                        expand="full" 
+                        :color="getButtonColor(item.status)" 
+                        @click="viewReport(item.scan_id)">
                         <ion-icon slot="start" :icon="eyeOutline"></ion-icon>
                         View
                       </ion-button>
                     </ion-col>
-                    <ion-col size="6">
+
+                    <!-- Conditionally render Delete or Stop button -->
+                    <ion-col size="6" v-if="item.status !== 'RUNNING'">
                       <ion-button expand="full" color="danger" @click="deleteReport(item.scan_id)">
                         <ion-icon slot="start" :icon="removeCircle"></ion-icon>
-                        <span class="text-warning">Delete</span>
+                        Delete
                       </ion-button>
                     </ion-col>
-                  </ion-row>
-                  <ion-row v-if="item.status === 'RUNNING'" class="ion-justify-content-center">
-                    <ion-col size="auto">
-                      <ion-button color="warning" @click="stopScan(item.scan_id)">
-                        <ion-icon slot="start" name="stop-circle-outline"></ion-icon>
+
+                    <ion-col size="6" v-if="item.status === 'RUNNING'">
+                      <ion-button expand="full" color="warning" @click="stopScan(item.scan_id)">
+                        <ion-icon slot="start" :icon="stopOutline"></ion-icon>
                         Stop
                       </ion-button>
                     </ion-col>
@@ -71,12 +72,9 @@
     </ion-content>
   </ion-page>
 </template>
-
-
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
-import { eyeOutline, removeCircle } from 'ionicons/icons';
-import ScanStorageService from '@/services/ScanStorageService';
+import { eyeOutline, removeCircle, stopOutline } from 'ionicons/icons';
 import ScanManager from '@/services/ScanManager';
 
 const loading = ref(true);
@@ -84,10 +82,15 @@ const results = ref([]);
 
 // Fetch results from storage
 const getResults = async () => {
-  const remote_data = await ScanManager.getAll();
   loading.value = true;
-  results.value = remote_data.events;
-  loading.value = false;
+  try {
+    const remote_data = await ScanManager.getAll();
+    results.value = remote_data.events;
+  } catch (error) {
+    console.error('Error fetching results:', error);
+  } finally {
+    loading.value = false;
+  }
 };
 
 // Handle viewing a report
@@ -102,7 +105,6 @@ const deleteReport = async (scanID: string) => {
     await getResults(); // Refresh the list after deletion
   } else {  
     console.error('Error deleting report:', result.data);
-    return;
   }
 };
 
@@ -116,7 +118,86 @@ const stopScan = async (scanID: string) => {
   }
 };
 
+// Get the card color class based on status
+const getCardColor = (status: string) => {
+  switch (status) {
+    case 'RUNNING':
+      return 'running-card';
+    case 'FINISHED':
+      return 'finished-card';
+    case 'STARTING':
+      return 'starting-card';
+    default:
+      return '';
+  }
+};
+
+// Get the button color based on the status
+const getButtonColor = (status: string) => {
+  switch (status) {
+    case 'RUNNING':
+      return 'warning';  // Orange color for running
+    case 'FINISHED':
+      return 'success';  // Green color for finished
+    case 'STARTING':
+      return 'primary';  // Light blue for starting
+    default:
+      return 'primary';  // Default to primary
+  }
+};
+
 onMounted(async () => {
   await getResults();
 });
-</script>
+</script><style scoped>
+/* Default card styles */
+ion-card {
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s ease;
+}
+
+/* Color styles for different statuses */
+.running-card {
+  background-color: rgba(255, 165, 0, 0.1); /* Light orange for running */
+}
+
+.finished-card {
+  background-color: rgba(0, 128, 0, 0.1); /* Light green for finished */
+}
+
+.starting-card {
+  background-color: rgba(173, 216, 230, 0.5); /* Light blue for starting */
+}
+
+/* Layout for content inside cards */
+ion-card-content {
+  font-size: 14px;
+  padding: 16px;
+}
+
+/* Add spacing and responsiveness for buttons */
+ion-card-footer {
+  padding: 16px;
+}
+
+/* Shared button style */
+.delete-button {
+  font-size: 14px;
+  padding: 10px;
+  text-transform: none;  /* Keeps the text as is (no all caps) */
+}
+
+/* Loading spinner */
+ion-spinner {
+  display: block;
+  margin: auto;
+}
+
+/* Improve appearance of no reports found message */
+h1 {
+  text-align: center;
+  color: var(--ion-color-medium);
+  padding: 32px;
+}
+</style>
