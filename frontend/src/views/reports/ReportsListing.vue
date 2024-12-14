@@ -84,8 +84,8 @@ const results = ref([]);
 const getResults = async () => {
   loading.value = true;
   try {
-    const remote_data = await ScanManager.getAll();
-    results.value = remote_data.events;
+    const remote_data = await ScanManager.getClientScans();
+    results.value = remote_data;
   } catch (error) {
     console.error('Error fetching results:', error);
   } finally {

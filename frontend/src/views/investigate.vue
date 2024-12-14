@@ -10,6 +10,7 @@
     </ion-header>
     
     <ion-content class="ion-padding">
+      <!-- Existing content remains the same -->
       <div class="investigation-container">
         <!-- Existing content remains the same -->
         <ion-card class="target-card">
@@ -21,10 +22,10 @@
             <form @submit.prevent="startScan">
               <ion-grid>
                 <ion-row class="ion-align-items-center">
-                  <ion-col size="12" size-md="10">
+                  <ion-col size="12" size-md="11">
                     <ion-input 
                       class="target-input" 
-                      color="primary" 
+                      color="tertiary" 
                       label="Target Details" 
                       label-placement="floating"
                       v-model="target" 
@@ -33,14 +34,15 @@
                       placeholder="Domain, IP, email, username..."
                     ></ion-input>
                   </ion-col>
-                  <ion-col size="12" size-md="2">
+                  <ion-col size="12" size-md="1">
                     <ion-button 
                       type="submit" 
                       class="search-button"
                       fill="outline"
+                    expand="block"
                       size="large"
                       :disabled="loading"
-                      color="primary"
+                      color="tertiary" 
                     >
                       <ion-icon :icon="searchOutline"></ion-icon>
                     </ion-button>
@@ -181,7 +183,7 @@ const target = ref('');
 const loading = ref(false);
 const error = ref('');
 const scanID = ref('');
-
+const clientID = ref('');
 // CSV Upload state
 const isCSVModalOpen = ref(false);
 const csvFileInput = ref<HTMLInputElement | null>(null);
@@ -190,9 +192,30 @@ const csvData = ref<Array<{target: string, status?: boolean}>>([]);
 const processingProgress = ref(0);
 const isProcessing = ref(false);
 
-// Existing startScan method
+// Start Scan Method
 const startScan = async () => {
-  // ... (previous implementation remains the same)
+  if (!target.value.trim()) {
+    error.value = 'Please enter a valid target.';
+    return;
+  }
+
+  error.value = '';
+  loading.value = true;
+
+  try {
+    // Perform a new scan
+    const response = await ScanManager.performScan(target.value);
+    if (response.success === "SUCCESS") {
+      scanID.value = response.scanID;
+      error.value = '';
+    } else {
+      error.value = response.data?.error || 'An unknown error occurred.';
+    }
+  } catch (err) {
+    error.value = `An error occurred: ${err.message}`;
+  } finally {
+    loading.value = false;
+  }
 };
 
 // CSV Upload Methods
@@ -259,8 +282,24 @@ const resetCSVUpload = () => {
 };
 </script>
 
+
 <style scoped>
 /* Existing styles remain the same */
+
+
+
+
+
+
+
+.target-input {
+  display: flex;
+  gap: 15px;
+  border:1px #6030ff solid;
+}
+
+
+
 .csv-upload-container {
   padding: 20px;
   display: flex;

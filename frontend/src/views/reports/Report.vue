@@ -122,6 +122,8 @@
 </template>
 
 <script lang="ts">
+import { Device } from '@capacitor/device';
+
 import {
   IonToolbar,
   IonHeader,
