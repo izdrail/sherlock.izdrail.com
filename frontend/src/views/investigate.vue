@@ -70,6 +70,7 @@
             <img src="@/assets/run.svg" alt="Success" class="success-image"/>
             <p class="success-message">
               Investigation started. 
+              <br>
               <ion-button 
                 fill="clear" 
                 color="primary" 

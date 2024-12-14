@@ -1,15 +1,22 @@
 import axios from 'axios';
 import { Device } from '@capacitor/device';
 
+/**
+ * ScanManager
+ *
+ * @class ScanManager
+ * @extends {Vue}
+ *
+ */
 class ScanManager {
 
   static getDeviceId(): Promise<any> {
-    const id  = Device.getId();
+    const id = Device.getId();
     return id.identifier;
   }
 
   static async performScan(target: string): Promise<any> {
-    const deviceid =  Device.getId();
+    const deviceid = Device.getId();
     const uri = 'backend/scan';  // Proxy path configured in vite.config.js
     const formData = {
       target: target,
@@ -34,7 +41,7 @@ class ScanManager {
 
 
   static async stopScan(scanID: string): Promise<any> {
-    const deviceid =  Device.getId();
+    const deviceid = Device.getId();
     const uri = 'backend/scan/stop';  // Proxy path configured in vite.config.js
     const formData = {
       scanId: scanID,
@@ -71,12 +78,12 @@ class ScanManager {
         },
       });
       console.log(response.data);
-      return {status:"SUCCESS"};
+      return { status: "SUCCESS" };
     } catch (error) {
       throw new Error('Cannot connect to server ' + error + '');
     }
   }
-  // Get results for a specific scan using GET request
+
   static async getResults(scanID: string): Promise<any> {
     const url = `osint/scanexportjsonmulti?ids=${scanID}`;
     try {
@@ -129,32 +136,33 @@ class ScanManager {
       throw new Error('Cannot connect to server ' + error + '');
     }
   }
-  // This function will query the SQL using the SQL query endpoint with a GET request
-static async getClientScans(): Promise<any> {
-  // Get the device ID
-  const deviceId = await Device.getId();
+  
+  static async getClientScans(): Promise<any> {
+    // Get the device ID
+    const deviceId = await Device.getId();
 
-  // Define the SQL query using the device ID
-  const query = `
+    // Define the SQL query using the device ID
+    const query = `
     SELECT * 
     FROM tbl_scan_instance
     WHERE name LIKE '%${deviceId.identifier}%';
   `;
 
-  // Encode the query and device ID as URL parameters
-  const url = `osint/query?query=${encodeURIComponent(query.trim())}`;
+    // Encode the query and device ID as URL parameters
+    const url = `osint/query?query=${encodeURIComponent(query.trim())}`;
 
-  try {
-    // Send a GET request to the SQL query endpoint
-    const response = await axios.get(url);
+    try {
+      // Send a GET request to the SQL query endpoint
+      const response = await axios.get(url);
 
-    // Return the server's response
-    return response.data;
-  } catch (error: any) {
-    // Throw a meaningful error message
-    throw new Error(`Cannot connect to server: ${error.message}`);
+      // Return the server's response
+      return response.data;
+
+    } catch (error: any) {
+      // Throw a meaningful error message
+      throw new Error(`Cannot connect to server: ${error.message}`);
+    }
   }
-}
 
 }
 

@@ -13,12 +13,12 @@
           <ion-button 
             expand="block" 
             color="primary" 
-            @click="sendUrlToApi"
+            @click="openUrlInBrowser"
             :disabled="!isValidLink"
-            aria-label="Send URL to API"
+            aria-label="Open URL in Browser"
           >
             <ion-icon :icon="openOutline" class="button-icon"></ion-icon>
-            Send Link
+            Open Link
           </ion-button>
         </div>
       </div>
@@ -32,10 +32,10 @@
     </div>
   </ion-card>
 </template>
+
 <script setup lang="ts">
 import { computed } from 'vue';
 import { globeOutline, openOutline } from 'ionicons/icons';
-import axios from 'axios';  // Assuming axios is used for making HTTP requests
 
 // Define props for the event
 const props = defineProps<{
@@ -63,20 +63,16 @@ const isValidLink = computed(() => {
   return !!extractedUrl.value;
 });
 
-// Method to send the URL to an API
-const sendUrlToApi = async () => {
+// Method to open the URL in a new browser tab
+const openUrlInBrowser = () => {
   if (isValidLink.value) {
-    try {
-      const response = await axios.post('https://backend.izdrail.com/nlp/article', {
-        link: extractedUrl.value
-      });
-      console.log('URL sent successfully:', response.data);
-    } catch (error) {
-      console.error('Error sending URL:', error);
-    }
+    window.open(extractedUrl.value, '_blank'); // Opens the link in a new tab
+  } else {
+    console.error('No valid URL to open.');
   }
 };
 </script>
+
 <style scoped>
 .external-account-event-card {
   border-radius: 12px;

@@ -21,12 +21,8 @@
                   <ion-card-title>Status: {{ item.status }}</ion-card-title>
                 </ion-card-header>
                 <ion-card-content>
-                  <p><strong>Case Number:</strong> {{ item.scan_id }}</p>
-                  <p><strong>Target:</strong> {{ item.scan_value }}</p>
-                  <p><strong>Start Time:</strong> {{ item.start_time }}</p>
-                  <p><strong>End Time:</strong> {{ item.end_time }}</p>
-                  <p><strong>Completion Time:</strong> {{ item.completion_time }}</p>
-                  <p><strong>Risk Score:</strong> {{ item.risk_score }}</p>
+                  <p><strong>Case Number:</strong> {{ item.guid }}</p>
+                  <p><strong>Target:</strong> {{ item.seed_target }}</p>
                 </ion-card-content>
                 <ion-card-footer>
                   <ion-row class="ion-justify-content-between">
@@ -34,7 +30,7 @@
                       <ion-button 
                         expand="full" 
                         :color="getButtonColor(item.status)" 
-                        @click="viewReport(item.scan_id)">
+                        @click="viewReport(item.guid)">
                         <ion-icon slot="start" :icon="eyeOutline"></ion-icon>
                         View
                       </ion-button>
@@ -42,14 +38,14 @@
 
                     <!-- Conditionally render Delete or Stop button -->
                     <ion-col size="6" v-if="item.status !== 'RUNNING'">
-                      <ion-button expand="full" color="danger" @click="deleteReport(item.scan_id)">
+                      <ion-button expand="full" color="danger" @click="deleteReport(item.guid)">
                         <ion-icon slot="start" :icon="removeCircle"></ion-icon>
                         Delete
                       </ion-button>
                     </ion-col>
 
                     <ion-col size="6" v-if="item.status === 'RUNNING'">
-                      <ion-button expand="full" color="warning" @click="stopScan(item.scan_id)">
+                      <ion-button expand="full" color="warning" @click="stopScan(item.guid)">
                         <ion-icon slot="start" :icon="stopOutline"></ion-icon>
                         Stop
                       </ion-button>
