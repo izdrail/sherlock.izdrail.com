@@ -43,7 +43,7 @@
                         Delete
                       </ion-button>
                     </ion-col>
-
+                   <!-- Conditionally render Delete or Stop button -->
                     <ion-col size="6" v-if="item.status === 'RUNNING'">
                       <ion-button expand="full" color="warning" @click="stopScan(item.guid)">
                         <ion-icon slot="start" :icon="stopOutline"></ion-icon>
