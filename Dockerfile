@@ -17,7 +17,9 @@ COPY frontend/package.json /home/frontend/package.json
 WORKDIR /home/frontend/
 RUN npm install --legacy-peer-deps
 
-RUN npm install -g vite
+RUN npm install -g vite --legacy-peer-deps
+RUN npm install @capacitor/device --legacy-peer-deps
+
 #Now copy to 
 
 
@@ -29,8 +31,8 @@ RUN pip install --no-cache-dir --upgrade pip \
 
 # Clone SpiderFoot and install its dependencies
 WORKDIR /home
-RUN git clone https://github.com/izdrail/spiderfoot.git
-WORKDIR /home/spiderfoot
+RUN git clone https://github.com/izdrail/spiderfoot.izdrail.com.git
+WORKDIR /home/spiderfoot.izdrail.com
 RUN pip install -r requirements.txt
 
 # Set up FastAPI app

@@ -8,7 +8,7 @@ from dto.scans.scan_dtos import EventDTO
 HEADERS = {"Content-Type": "application/json", "Accept": "application/json"}
 
 
-class SpiderFootAPI:
+class BBotService:
     """Configuration for SpiderFoot API endpoints."""
     BASE_URL = "http://localhost:10002"
     START_SCAN = f"{BASE_URL}/startscan"

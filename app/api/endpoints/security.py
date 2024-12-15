@@ -32,6 +32,7 @@ nlp.max_length = 10000000
 # Request Models
 class ScanRequest(BaseModel):
     target: str
+    client: str
 
 
 class CheckScan(BaseModel):
@@ -41,21 +42,22 @@ class CheckScan(BaseModel):
 EXCLUDED_ENTITY_TYPES = {"PERCENT", "MONEY", "QUANTITY", "ORDINAL", "CARDINAL"}
 
 
-@router.post("/security/scan", response_model=ScanResponseDTO)
+@router.post("/scan", response_model=ScanResponseDTO)
 @version(1)
 async def scan(request: ScanRequest):
     # Start Scan
-    result = SpiderFootService.start_scan(request.target)
+    result = SpiderFootService.start_scan(request.target, request.client)
     # Return Response
     return ScanResponseDTO(
         target=request.target,
+        identifier=request.client,
         scanId=result[1],
         status=result[0],
         events={"status": result[0], "id": result[1]},
     )
 
 
-@router.post("/security/scan/stop")
+@router.post("/scan/stop")
 @version(1)
 async def scan(request: ScanRequest):
     # Stop Scan
@@ -66,7 +68,7 @@ async def scan(request: ScanRequest):
 
 
 
-@router.post("/security/scan/delete")
+@router.post("/scan/delete")
 @version(1)
 async def scan(request: ScanRequest):
     # Stop Scan
@@ -77,7 +79,7 @@ async def scan(request: ScanRequest):
 
 
 
-@router.get("/security/scan/list", response_model=ScanListDTO)
+@router.get("/scan/list", response_model=ScanListDTO)
 @version(1)
 async def scan_list():
     result = SpiderFootService.get_scan_list()
@@ -106,7 +108,7 @@ async def scan_list():
 
 
 
-@router.post("/security/scan/options", response_model=ScanOptionsDTO)
+@router.post("/scan/options", response_model=ScanOptionsDTO)
 @version(1)
 async def scan_options(request: CheckScan):
     result = SpiderFootService.get_scan_options(request.scanId)
@@ -117,7 +119,7 @@ async def scan_options(request: CheckScan):
     )
 
 
-@router.post("/security/scan/graphic", response_model=ScanGraphicsDTO)
+@router.post("/scan/graphic", response_model=ScanGraphicsDTO)
 @version(1)
 async def scan_graphic(request: CheckScan):
     result = SpiderFootService.get_scan_graphics(request.scanId)
@@ -128,7 +130,7 @@ async def scan_graphic(request: CheckScan):
     )
 
 
-@router.post("/security/scan/events")
+@router.post("/scan/events")
 @version(1)
 async def scan_events(request: CheckScan):
     result = SpiderFootService.get_scan_events(request.scanId)
@@ -140,7 +142,7 @@ async def scan_events(request: CheckScan):
 
 
 # Updated Endpoint
-@router.post("/security/scan/analyze")
+@router.post("/scan/analyze")
 @version(1)
 async def analyze_scan(request: CheckScan):
     """
@@ -166,7 +168,7 @@ async def analyze_scan(request: CheckScan):
         raise HTTPException()
 
 
-@router.get("/security/pocs", response_model=PocResponseDTO)
+@router.get("/pocs", response_model=PocResponseDTO)
 @version(1)
 async def get_pocs(
         limit: int = 10,
@@ -183,7 +185,7 @@ async def get_pocs(
 
 
 #TODO : Add support for `cve_id`
-@router.get("/security/alerts", response_model=PocResponseDTO)
+@router.get("/alerts", response_model=PocResponseDTO)
 @version(1)
 async def get_pocs(
         limit: int = 10,
