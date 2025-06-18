@@ -31,8 +31,8 @@ RUN pip install --no-cache-dir --upgrade pip \
 
 # Clone SpiderFoot and install its dependencies
 WORKDIR /home
-RUN git clone https://github.com/izdrail/spiderfoot.izdrail.com.git
-WORKDIR /home/spiderfoot.izdrail.com
+RUN git clone https://github.com/smicallef/spiderfoot
+WORKDIR /home/spiderfoot
 RUN pip install -r requirements.txt
 
 # Set up FastAPI app
