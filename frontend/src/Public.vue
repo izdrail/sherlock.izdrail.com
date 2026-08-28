@@ -9,19 +9,18 @@
           </ion-col>
           <ion-col>
             <ion-list class="menu-list">
-              <ion-item
-                  router-link
-                  :href="appPage.url"
-                  v-for="appPage in appPages"
-                  :key="appPage.title"
-                  :to="appPage.url"
-                  :inset="false"
-                  lines="none"
-                  class="menu-item"
-              >
-                <ion-icon :icon="appPage.icon" aria-hidden="true" slot="start"></ion-icon>
-                <ion-label>{{ appPage.title }}</ion-label>
-              </ion-item>
+              <ion-menu-toggle auto-hide="false" v-for="appPage in appPages" :key="appPage.title">
+                <ion-item
+                    :router-link="appPage.url"
+                    router-direction="root"
+                    :inset="false"
+                    lines="none"
+                    class="menu-item"
+                >
+                  <ion-icon :icon="appPage.icon" aria-hidden="true" slot="start"></ion-icon>
+                  <ion-label>{{ appPage.title }}</ion-label>
+                </ion-item>
+              </ion-menu-toggle>
             </ion-list>
           </ion-col>
         </ion-content>
@@ -38,9 +37,20 @@
 <script lang="ts">
 import VNetworkGraph from "v-network-graph";
 import "v-network-graph/lib/style.css";
-import { IonApp, IonSplitPane, IonMenu, IonContent, IonRouterOutlet, IonCol, IonList, IonItem, IonIcon, IonLabel } from '@ionic/vue';
 import {
-  analytics,
+  IonApp,
+  IonSplitPane,
+  IonMenu,
+  IonMenuToggle,
+  IonContent,
+  IonRouterOutlet,
+  IonCol,
+  IonList,
+  IonItem,
+  IonIcon,
+  IonLabel,
+} from '@ionic/vue';
+import {
   fileTrayStackedSharp,
   alertCircle,
   footstepsOutline,
@@ -59,6 +69,7 @@ export default defineComponent({
     IonApp,
     IonSplitPane,
     IonMenu,
+    IonMenuToggle,
     IonContent,
     IonRouterOutlet,
     IonCol,
