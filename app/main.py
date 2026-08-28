@@ -5,9 +5,9 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker, declarative_base
+from fastapi_versioning import VersionedFastAPI, version
 
-
-from api.endpoints import security
+from api.endpoints import security, assistant
 
 # Initialize FastAPI app
 app = FastAPI(
@@ -33,31 +33,12 @@ app.add_middleware(
     allow_headers=["*"],
     allow_credentials=True,
 )
-# TODO - Simplify and improve code
-
-
-
-
-import asyncio
-import uvicorn
-from fastapi import FastAPI, Request
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import HTMLResponse
-from fastapi.templating import Jinja2Templates
-from fastapi.staticfiles import StaticFiles
-
-from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
-from sqlalchemy.orm import sessionmaker, declarative_base
-from fastapi_versioning import VersionedFastAPI, version
-
-from api.endpoints import security
-
-
 
 # Router inclusion
 app.include_router(security.router)
+app.include_router(assistant.router)
 
-app = VersionedFastAPI(app,version_format='{major}')
+app = VersionedFastAPI(app, version_format='{major}')
 
 @app.get("/")
 async def root():

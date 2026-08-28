@@ -7,7 +7,7 @@
           <ion-col>
             <img src="./assets/logo2.svg" alt="Logo" style="width: 25vw; height: 25vh;"/>
           </ion-col>
-          <ion-col >
+          <ion-col>
             <ion-list class="menu-list">
               <ion-item
                   router-link
@@ -36,18 +36,71 @@
 </template>
 
 <script lang="ts">
-import VNetworkGraph from "v-network-graph"
-import "v-network-graph/lib/style.css"
-import { IonApp, IonSplitPane, IonMenu, IonContent, IonRouterOutlet } from '@ionic/vue';
-import { analytics, fileTrayStackedSharp, alertCircle,footstepsOutline,peopleCircleOutline,eyeOutline} from 'ionicons/icons';
+import VNetworkGraph from "v-network-graph";
+import "v-network-graph/lib/style.css";
+import { IonApp, IonSplitPane, IonMenu, IonContent, IonRouterOutlet, IonCol, IonList, IonItem, IonIcon, IonLabel } from '@ionic/vue';
+import {
+  analytics,
+  fileTrayStackedSharp,
+  alertCircle,
+  footstepsOutline,
+  shieldCheckmarkOutline,
+  warningOutline,
+  chatbubblesOutline,
+  linkOutline,
+  keyOutline,
+  bookOutline,
+} from 'ionicons/icons';
 import { defineComponent } from 'vue';
-const appPages = []
+
 export default defineComponent({
   name: 'Public',
-  components: { IonApp, IonSplitPane, IonMenu, IonContent, IonRouterOutlet, VNetworkGraph },
+  components: {
+    IonApp,
+    IonSplitPane,
+    IonMenu,
+    IonContent,
+    IonRouterOutlet,
+    IonCol,
+    IonList,
+    IonItem,
+    IonIcon,
+    IonLabel,
+    VNetworkGraph,
+  },
   data() {
     return {
       appPages: [
+        {
+          title: 'Security Dashboard',
+          url: '/assistant/dashboard',
+          icon: shieldCheckmarkOutline,
+        },
+        {
+          title: 'Threat Analyzer',
+          url: '/assistant/threat-analyzer',
+          icon: warningOutline,
+        },
+        {
+          title: 'Cyber Chatbot',
+          url: '/assistant/chatbot',
+          icon: chatbubblesOutline,
+        },
+        {
+          title: 'URL Checker',
+          url: '/assistant/url-checker',
+          icon: linkOutline,
+        },
+        {
+          title: 'Password Generator',
+          url: '/assistant/password-generator',
+          icon: keyOutline,
+        },
+        {
+          title: 'Useful Links',
+          url: '/assistant/useful-links',
+          icon: bookOutline,
+        },
         {
           title: 'Investigate',
           url: '/investigate',
