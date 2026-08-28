@@ -31,18 +31,26 @@
     </div>
 
     <!-- Actual Data Display -->
-    <div v-else-if="!showErrorCard">
-      <template v-if="results.length">
-        <component 
-          v-for="(event, index) in results" 
-          :key="index"
-          :is="getEventComponent(event.event_type)"
-          :event="event"
-        />
+    <div v-else-if="!showErrorCard" class="ion-padding">
+      <template v-if="processedEvents.length">
+        <template v-for="(item, index) in processedEvents" :key="index">
+          <!-- Render consolidated compromised card if multiple or grouped -->
+          <EmailAddrCompromisedEventCard
+            v-if="item.type === 'COMPROMISED_GROUP'"
+            :events="item.events"
+          />
+
+          <!-- Render individual event cards -->
+          <component
+            v-else
+            :is="getEventComponent(item.event.event_type)"
+            :event="item.event"
+          />
+        </template>
       </template>
       <ion-card v-else>
         <ion-card-content class="ion-text-center">
-         No informations found for case type {{ scanID }}.
+         No information found for case type {{ scanID }}.
         </ion-card-content>
       </ion-card>
     </div>
@@ -72,10 +80,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, defineAsyncComponent, shallowRef } from 'vue';
+import { ref, computed, onMounted, defineAsyncComponent } from 'vue';
 import { useRouter } from 'vue-router';
 import ScanManager from '../../services/ScanManager';
-import DefaultEventCard from './cards/DefaultEventCard.vue'; // Fallback component
+import DefaultEventCard from './cards/DefaultEventCard.vue';
+import EmailAddrCompromisedEventCard from './cards/EmailAddrCompromisedEventCard.vue';
 
 // Type definition for scan events
 interface ScanEvent {
@@ -94,6 +103,9 @@ enum EventType {
   ACCOUNT_EXTERNAL_OWNED = 'ACCOUNT_EXTERNAL_OWNED',
   EMAILADDR_COMPROMISED = 'EMAILADDR_COMPROMISED',
   HUMAN_NAME = 'HUMAN_NAME',
+  RAW_RIR_DATA = 'RAW_RIR_DATA',
+  EMAILADDR = 'EMAILADDR',
+  USERNAME = 'USERNAME',
 }
 
 const router = useRouter();
@@ -117,23 +129,46 @@ const eventComponents = {
   [EventType.ACCOUNT_EXTERNAL_OWNED]: defineAsyncComponent(() => 
     import('./cards/AccountExternalOwnedEventCard.vue').catch(() => DefaultEventCard)
   ),
-  [EventType.EMAILADDR_COMPROMISED]: defineAsyncComponent(() => 
-    import('./cards/EmailAddrCompromisedEventCard.vue').catch(() => DefaultEventCard)
-  ),
+  [EventType.EMAILADDR_COMPROMISED]: EmailAddrCompromisedEventCard,
   [EventType.HUMAN_NAME]: defineAsyncComponent(() => 
     import('./cards/HumanNameEventCard.vue').catch(() => DefaultEventCard)
   ),
   [EventType.AFFILIATE_WEB_CONTENT]: defineAsyncComponent(() => 
     import('./cards/AffiliateWebContentEventCard.vue').catch(() => DefaultEventCard)
+  ),
+  [EventType.RAW_RIR_DATA]: defineAsyncComponent(() =>
+    import('./cards/RawRirDataEventCard.vue').catch(() => DefaultEventCard)
   )
 };
 
 // Function to get the appropriate component for an event type
 const getEventComponent = (eventType: string) => {
-  // Check if a specific component exists for the event type
-  // If not, fall back to the default event card
   return eventComponents[eventType as EventType] || DefaultEventCard;
 };
+
+// Process events to consolidate all EMAILADDR_COMPROMISED into a single card
+const processedEvents = computed(() => {
+  const compromisedEvents: ScanEvent[] = [];
+  const otherItems: Array<{ type: 'SINGLE'; event: ScanEvent } | { type: 'COMPROMISED_GROUP'; events: ScanEvent[] }> = [];
+
+  for (const event of results.value) {
+    if (event.event_type === EventType.EMAILADDR_COMPROMISED) {
+      compromisedEvents.push(event);
+    } else {
+      otherItems.push({ type: 'SINGLE', event });
+    }
+  }
+
+  // If there are compromised events, insert 1 consolidated item at top or in place
+  if (compromisedEvents.length > 0) {
+    otherItems.unshift({
+      type: 'COMPROMISED_GROUP',
+      events: compromisedEvents
+    });
+  }
+
+  return otherItems;
+});
 
 const getEvents = async () => {
   try {
