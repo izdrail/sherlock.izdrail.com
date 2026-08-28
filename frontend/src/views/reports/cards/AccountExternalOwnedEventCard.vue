@@ -1,43 +1,51 @@
 <template>
-  <ion-card class="external-account-event-card ion-margin-bottom">
-    <div class="card-content-wrapper">
-      <div class="external-account-details">
-        <ion-card-header>
-          <ion-card-title class="event-title">
-              {{ nonUrlContent }}
-          </ion-card-title>
-        </ion-card-header>
-        <!-- Display non-URL content -->
-    
-        <div class="card-actions">
-          <ion-button 
-            expand="block" 
-            color="primary" 
-            @click="openUrlInBrowser"
-            :disabled="!isValidLink"
-            aria-label="Open URL in Browser"
-          >
-            <ion-icon :icon="openOutline" class="button-icon"></ion-icon>
-            Open Link
-          </ion-button>
+  <ion-card class="external-account-card ion-margin-bottom">
+    <ion-card-header class="account-card-header">
+      <div class="header-container">
+        <ion-icon :icon="globeOutline" class="header-icon"></ion-icon>
+        <div>
+          <ion-card-title class="account-title">{{ nonUrlContent }}</ion-card-title>
+          <ion-card-subtitle v-if="event.source_data">
+            Source: {{ event.source_data }}
+          </ion-card-subtitle>
         </div>
       </div>
-      <div class="external-account-icon-container">
-        <ion-icon 
-          :icon="globeOutline" 
-          class="large-external-account-icon"
-          aria-hidden="true"
-        ></ion-icon>
+    </ion-card-header>
+
+    <ion-card-content class="account-card-content">
+      <div class="card-actions" v-if="isValidLink">
+        <ion-button
+          expand="block"
+          color="tertiary"
+          size="small"
+          @click="openUrlInBrowser"
+        >
+          <ion-icon :icon="openOutline" slot="start"></ion-icon>
+          Open Profile / Link
+        </ion-button>
       </div>
-    </div>
+
+      <div class="card-footer-note" v-if="event.last_seen">
+        <ion-note color="medium">Last Seen: {{ event.last_seen }}</ion-note>
+      </div>
+    </ion-card-content>
   </ion-card>
 </template>
 
 <script setup lang="ts">
 import { computed } from 'vue';
+import {
+  IonCard,
+  IonCardHeader,
+  IonCardTitle,
+  IonCardSubtitle,
+  IonCardContent,
+  IonButton,
+  IonIcon,
+  IonNote
+} from '@ionic/vue';
 import { globeOutline, openOutline } from 'ionicons/icons';
 
-// Define props for the event
 const props = defineProps<{
   event: {
     event_type: string;
@@ -47,70 +55,65 @@ const props = defineProps<{
   };
 }>();
 
-// Extract URL from data
 const extractedUrl = computed(() => {
-  const urlMatch = props.event.data.match(/(https?:\/\/[^\s]+)/);
+  const urlMatch = props.event.data ? props.event.data.match(/(https?:\/\/[^\s]+)/) : null;
   return urlMatch ? urlMatch[1] : '';
 });
 
-// Extract the non-URL part of the data
 const nonUrlContent = computed(() => {
-  return props.event.data.replace(/(https?:\/\/[^\s]+)/g, '').trim();
+  if (!props.event.data) return 'External Account';
+  const cleaned = props.event.data.replace(/(https?:\/\/[^\s]+)/g, '').trim();
+  return cleaned || props.event.data;
 });
 
-// Check if link is valid
-const isValidLink = computed(() => {
-  return !!extractedUrl.value;
-});
+const isValidLink = computed(() => !!extractedUrl.value);
 
-// Method to open the URL in a new browser tab
 const openUrlInBrowser = () => {
   if (isValidLink.value) {
-    window.open(extractedUrl.value, '_blank'); // Opens the link in a new tab
-  } else {
-    console.error('No valid URL to open.');
+    window.open(extractedUrl.value, '_blank');
   }
 };
 </script>
 
 <style scoped>
-.external-account-event-card {
+.external-account-card {
+  border-left: 4px solid var(--ion-color-tertiary, #5260ff);
   border-radius: 12px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 10px rgba(82, 96, 255, 0.1);
 }
 
-.card-content-wrapper {
-  display: flex;
-  align-items: stretch;
+.account-card-header {
+  background-color: rgba(82, 96, 255, 0.08);
+  padding: 12px 16px;
 }
 
-.external-account-details {
-  flex-grow: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-
-.external-account-icon-container {
+.header-container {
   display: flex;
   align-items: center;
-  justify-content: center;
-  width: 120px;
-  border-top-right-radius: 12px;
-  border-bottom-right-radius: 12px;
+  gap: 12px;
 }
 
-.large-external-account-icon {
-  font-size: 80px;
-  color: var(--ion-color-primary);
-  opacity: 0.7;
+.header-icon {
+  font-size: 32px;
+  color: var(--ion-color-tertiary, #5260ff);
+}
+
+.account-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--ion-color-dark);
+}
+
+.account-card-content {
+  padding: 12px 16px;
 }
 
 .card-actions {
-  padding: 0 16px 16px;
+  margin-bottom: 8px;
 }
 
-.button-icon {
-  margin-right: 8px;
+.card-footer-note {
+  font-size: 0.8rem;
+  text-align: right;
 }
 </style>

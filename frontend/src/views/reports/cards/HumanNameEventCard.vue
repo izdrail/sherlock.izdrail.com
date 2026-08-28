@@ -1,89 +1,82 @@
 <template>
   <ion-card class="human-name-card ion-margin-bottom">
-    <div class="card-content-wrapper">
-      <!-- Name Details -->
-      <div class="human-name-details">
-        <ion-card-header color="white" >
-          <ion-card-title class="name-title">
-            {{ event.data }}
-          </ion-card-title>
-        </ion-card-header>
-  
+    <ion-card-header class="name-card-header">
+      <div class="header-container">
+        <ion-icon :icon="personCircleOutline" class="header-icon"></ion-icon>
+        <div>
+          <ion-card-title class="name-title">{{ event.data }}</ion-card-title>
+          <ion-card-subtitle v-if="event.source_data">
+            Source: {{ event.source_data }}
+          </ion-card-subtitle>
+        </div>
       </div>
+    </ion-card-header>
 
-      <!-- User Icon -->
-      <div class="human-name-icon-container">
-        <ion-icon
-        :icon="personCircleOutline" 
-        class="large-human-name-icon"></ion-icon>
+    <ion-card-content class="name-card-content">
+      <div class="card-footer-note" v-if="event.last_seen">
+        <ion-note color="medium">Last Seen: {{ event.last_seen }}</ion-note>
       </div>
-    </div>
+    </ion-card-content>
   </ion-card>
 </template>
 
 <script setup lang="ts">
-import { personCircle, personCircleOutline } from 'ionicons/icons';
-import { defineProps } from 'vue';
+import {
+  IonCard,
+  IonCardHeader,
+  IonCardTitle,
+  IonCardSubtitle,
+  IonCardContent,
+  IonIcon,
+  IonNote
+} from '@ionic/vue';
+import { personCircleOutline } from 'ionicons/icons';
 
-// Define props for the event
 const props = defineProps<{
   event: {
     event_type: string;
     source_data: string;
     last_seen: string;
-    data: string; // Human name
+    data: string;
   };
 }>();
 </script>
 
 <style scoped>
-/* Card Styling */
 .human-name-card {
+  border-left: 4px solid var(--ion-color-success, #2dd36f);
   border-radius: 12px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 10px rgba(45, 211, 111, 0.12);
 }
 
-/* Wrapper Styling */
-.card-content-wrapper {
-  display: flex;
-  align-items: stretch;
+.name-card-header {
+  background-color: rgba(45, 211, 111, 0.08);
+  padding: 12px 16px;
 }
 
-/* Details Section */
-.human-name-details {
-  flex-grow: 1;
+.header-container {
   display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  padding: 16px;
+  align-items: center;
+  gap: 12px;
+}
+
+.header-icon {
+  font-size: 36px;
+  color: var(--ion-color-success, #2dd36f);
 }
 
 .name-title {
-  font-size: 20px;
-  font-weight: bold;
+  font-size: 1.15rem;
+  font-weight: 700;
   color: var(--ion-color-dark);
-  margin-bottom: 8px;
 }
 
-.card-details {
-  font-size: 14px;
-  color: var(--ion-color-medium);
-  margin-top: 8px;
+.name-card-content {
+  padding: 8px 16px 12px 16px;
 }
 
-/* Icon Section */
-.human-name-icon-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-
-}
-
-.large-human-name-icon {
-  font-size: 100px;
-  widows: 100%;
-  color: var(--ion-color-primary);
-  opacity: 0.7;
+.card-footer-note {
+  font-size: 0.8rem;
+  text-align: right;
 }
 </style>
