@@ -6,7 +6,7 @@ LABEL maintainer="Stefan Bogdanel <stefan@izdrail.com>"
 # Install OS dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
     curl nodejs gcc g++ make procps libssl-dev npm \
-    htop plocate supervisor git \
+    htop supervisor git \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 
@@ -20,7 +20,7 @@ RUN npm install --legacy-peer-deps
 RUN npm install -g vite --legacy-peer-deps
 RUN npm install @capacitor/device --legacy-peer-deps
 
-#Now copy to
+#Now copy to 
 
 
 # Upgrade pip and install pipx
@@ -37,7 +37,7 @@ RUN pip install -r requirements.txt
 
 # Set up FastAPI app
 WORKDIR /home/app
-COPY app .
+COPY app . 
 
 RUN pip install --no-cache-dir --upgrade -r requirements.txt \
     && pip install fastapi-versioning pymupdf4llm python-multipart yake tls_client uvicorn litellm asent spacyfishing\
@@ -48,8 +48,7 @@ RUN pip install --no-cache-dir --upgrade -r requirements.txt \
 # Clean up
 RUN apt-get autoremove -y \
     && apt-get clean \
-    && rm -rf /var/lib/apt/lists/* /home/osint/app/.git \
-    && updatedb
+    && rm -rf /var/lib/apt/lists/* /home/osint/app/.git
 
 # Copy Supervisor configuration
 COPY docker/supervisord.conf /etc/supervisord.conf
@@ -58,6 +57,7 @@ COPY docker/supervisord.conf /etc/supervisord.conf
 
 
 # Expose application ports
-EXPOSE 10000 10001 10002
+EXPOSE 10000 10001 10002 
 # Run application
 ENTRYPOINT ["supervisord", "-c", "/etc/supervisord.conf", "-n"]
+
