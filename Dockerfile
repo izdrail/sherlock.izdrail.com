@@ -6,7 +6,7 @@ LABEL maintainer="Stefan Bogdanel <stefan@izdrail.com>"
 # Install OS dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
     curl nodejs gcc g++ make procps libssl-dev npm \
-    htop mlocate supervisor software-properties-common git \
+    htop supervisor git \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 
@@ -48,8 +48,7 @@ RUN pip install --no-cache-dir --upgrade -r requirements.txt \
 # Clean up
 RUN apt-get autoremove -y \
     && apt-get clean \
-    && rm -rf /var/lib/apt/lists/* /home/osint/app/.git \
-    && updatedb
+    && rm -rf /var/lib/apt/lists/* /home/osint/app/.git
 
 # Copy Supervisor configuration
 COPY docker/supervisord.conf /etc/supervisord.conf
