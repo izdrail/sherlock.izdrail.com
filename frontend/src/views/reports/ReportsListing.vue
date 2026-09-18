@@ -47,7 +47,7 @@
 
       <ion-card v-else-if="!loading"><ion-card-content class="empty-state">{{ results.length ? 'No cases match these filters.' : 'No cases found.' }}</ion-card-content></ion-card>
 
-      <ion-modal :is-open="editing !== null" @did-dismiss="closeEditor">
+      <ion-modal v-if="editing" :is-open="true" @did-dismiss="closeEditor">
         <ion-header><ion-toolbar><ion-title>Case details</ion-title><ion-buttons slot="end"><ion-button @click="closeEditor">Close</ion-button></ion-buttons></ion-toolbar></ion-header>
         <ion-content class="ion-padding">
           <ion-input v-model="editLabel" label="Label" label-placement="stacked" placeholder="e.g. Client domain review" />
