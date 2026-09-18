@@ -6,6 +6,7 @@ const routes: Array<RouteRecordRaw> = [
     path: '',
     redirect: '/assistant/dashboard'
   },
+  { path: '/bbot', component: () => import('@/views/integrations/BBotConsole.vue') },
   {
     path: '/investigate',
     component: () => import('../views/investigate.vue')
