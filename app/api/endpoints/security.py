@@ -1,208 +1,102 @@
-import sqlite3
-from http.client import HTTPException
-from typing import Optional
+from typing import Any, Optional
 
-from fastapi import APIRouter, Depends
-from fastapi_versioning import VersionedFastAPI, version
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import Session
-from bbot.scanner import Scanner
+from fastapi import APIRouter, Query
+from fastapi_versioning import version
+from pydantic import BaseModel, Field
 
 from dto.pocs.alerts_dto import PocResponseDTO
-from dto.scans.scan_dtos import (
-    ScanResponseDTO,
-    ScanListDTO,
-    ScanOptionsDTO,
-    ScanGraphicsDTO,
-    ScanEventsDTO,
-    AnalysisDTO,
-)
-from pydantic import BaseModel
-import spacy
-
-from services.spider_foot_service import SpiderFootService
+from dto.scans.scan_dtos import ScanGraphicsDTO, ScanListDTO, ScanOptionsDTO, ScanResponseDTO
 from services.poc_service import PocService
+from services.spider_foot_service import SpiderFootService
 
-# Initialize Router
 router = APIRouter()
 
-# Load SpaCy Model
-nlp = spacy.load("en_core_web_md")
-nlp.max_length = 10000000
-# Request Models
-class ScanRequest(BaseModel):
-    target: str
-    client: str
+
+class StartScanRequest(BaseModel):
+    target: str = Field(min_length=1, max_length=2048)
+    client: str = Field(min_length=1, max_length=255)
+    usecase: str = "all"
+    modules: list[str] = []
+    event_types: list[str] = []
 
 
-class CheckScan(BaseModel):
-    scanId: str
+class ScanIdRequest(BaseModel):
+    scanId: str = Field(min_length=1, max_length=128)
 
 
-EXCLUDED_ENTITY_TYPES = {"PERCENT", "MONEY", "QUANTITY", "ORDINAL", "CARDINAL"}
+def serialize_scan(item: Any) -> dict[str, Any]:
+    if isinstance(item, dict):
+        return item
+    fields = ["guid", "seed_target", "name", "started_at", "ended_at", "duration", "status", "risk_score", "risk_levels"]
+    return {key: value for key, value in zip(fields, item)}
 
 
 @router.post("/scan", response_model=ScanResponseDTO)
 @version(1)
-async def scan(request: ScanRequest):
-    # Start Scan
-    result = SpiderFootService.start_scan(request.target, request.client)
-    # Return Response
-    return ScanResponseDTO(
-        target=request.target,
-        identifier=request.client,
-        scanId=result[1],
-        status=result[0],
-        events={"status": result[0], "id": result[1]},
-    )
+async def start_scan(request: StartScanRequest):
+    result = SpiderFootService.start_scan(request.target, request.client, request.usecase, ",".join(request.modules), ",".join(request.event_types))
+    status, scan_id = result[0], result[1]
+    return ScanResponseDTO(target=request.target, identifier=request.client, scanId=scan_id, status=status, events={"status": status, "id": scan_id})
 
 
 @router.post("/scan/stop")
 @version(1)
-async def scan(request: ScanRequest):
-    # Stop Scan
-    result = SpiderFootService.stop_scan(request.target)
-    # Return Response
-    return result.json()
-
-
+async def stop_scan(request: ScanIdRequest):
+    return SpiderFootService.stop_scan(request.scanId)
 
 
 @router.post("/scan/delete")
 @version(1)
-async def scan(request: ScanRequest):
-    # Stop Scan
-    result = SpiderFootService.delete_scan(request.target)
-    # Return Response
-    return result.json()
+async def delete_scan(request: ScanIdRequest):
+    return SpiderFootService.delete_scan(request.scanId)
 
 
+@router.post("/scan/rerun")
+@version(1)
+async def rerun_scan(request: ScanIdRequest):
+    return SpiderFootService.rerun_scan(request.scanId)
 
 
 @router.get("/scan/list", response_model=ScanListDTO)
 @version(1)
-async def scan_list():
-    result = SpiderFootService.get_scan_list()
-    print(result)
+async def scan_list(client: Optional[str] = Query(None, max_length=255)):
+    events = [serialize_scan(item) for item in SpiderFootService.get_scan_list()]
+    if client:
+        events = [item for item in events if client in str(item.get("name", ""))]
+    return ScanListDTO(status=200, events=events)
 
-    # Map each sublist to a dictionary
-    events = [
-        {
-            "scan_id": item[0],
-            "scan_target": item[1],
-            "scan_value": item[2],
-            "start_time": item[3],
-            "end_time": item[4],
-            "completion_time": item[5],
-            "status": item[6],
-            "risk_score": item[7],
-            "risk_levels": item[8]
-        }
-        for item in result
-    ]
 
-    return ScanListDTO(
-        status=200,
-        events=events,
-    )
-
+@router.get("/scan/{scan_id}/status")
+@version(1)
+async def scan_status(scan_id: str):
+    return {"scanId": scan_id, "status": SpiderFootService.get_scan_status(scan_id)}
 
 
 @router.post("/scan/options", response_model=ScanOptionsDTO)
 @version(1)
-async def scan_options(request: CheckScan):
-    result = SpiderFootService.get_scan_options(request.scanId)
-    return ScanOptionsDTO(
-        scanId=request.scanId,
-        status=200,
-        options=result,
-    )
+async def scan_options(request: ScanIdRequest):
+    return ScanOptionsDTO(scanId=request.scanId, status=200, options=SpiderFootService.get_scan_options(request.scanId))
 
 
 @router.post("/scan/graphic", response_model=ScanGraphicsDTO)
 @version(1)
-async def scan_graphic(request: CheckScan):
-    result = SpiderFootService.get_scan_graphics(request.scanId)
-    return ScanGraphicsDTO(
-        scanId=request.scanId,
-        status=200,
-        graphics=result,
-    )
+async def scan_graphic(request: ScanIdRequest):
+    return ScanGraphicsDTO(scanId=request.scanId, status=200, graphics=SpiderFootService.get_scan_graphics(request.scanId))
 
 
 @router.post("/scan/events")
 @version(1)
-async def scan_events(request: CheckScan):
-    result = SpiderFootService.get_scan_events(request.scanId)
-    #print(result)
-    return {
-        "status": 200,
-        "events": result.json()
-    }
-
-
-# Updated Endpoint
-@router.post("/scan/analyze")
-@version(1)
-async def analyze_scan(request: CheckScan):
-    """
-    Analyze scan results using spaCy for Named Entity Recognition (NER).
-    """
-    
-    try:
-        results = SpiderFootService.get_scan_events(request.scanId)
-
-        for event in results.json():
-            print(event)
-        
-        # Add the "spacy_setfit" pipeline component to the spaCy model, and configure it with SetFit parameters
-        doc = nlp(results.text)
-
-        # Return formatted response
-        return {
-            "status": 200,
-            "events": results.json(),
-            "doc": doc.ents
-        }
-    except Exception as e:
-        raise HTTPException()
+async def scan_events(request: ScanIdRequest):
+    return {"status": 200, "events": SpiderFootService.get_scan_events(request.scanId)}
 
 
 @router.get("/pocs", response_model=PocResponseDTO)
 @version(1)
-async def get_pocs(
-        limit: int = 10,
-        cve_id: Optional[str] = None,
-):
-    pocs = PocService.get_pocs(limit=limit, cve_id=cve_id)
-    
-    serialized_pocs = [poc.model_dump() for poc in pocs]  # Use `.dict()` for Pydantic v1
-
-    return PocResponseDTO(
-        status=200,
-        data=serialized_pocs
-    )
+async def get_pocs(limit: int = 10, cve_id: Optional[str] = None):
+    return PocResponseDTO(status=200, data=[poc.model_dump() for poc in PocService.get_pocs(limit=limit, cve_id=cve_id)])
 
 
-#TODO : Add support for `cve_id`
 @router.get("/alerts", response_model=PocResponseDTO)
 @version(1)
-async def get_pocs(
-        limit: int = 10,
-        cve_id: Optional[str] = None,
-):
-    pocs = PocService.get_pocs(limit=limit, cve_id=cve_id)
-    serialized_pocs = [poc.model_dump() for poc in pocs]  # Use `.dict()` for Pydantic v1
-
-    return PocResponseDTO(
-        status=200,
-        data=serialized_pocs
-    )
-@router.post("/bbot")
-@version(1)
-async def scan(request: ScanRequest):
-    # Stop Scan
-    scan = Scanner(request.target, presets=["subdomain-enum"])
-
-    async for event in scan.async_start():
-        print(event.json())
+async def get_alerts(limit: int = 10, cve_id: Optional[str] = None):
+    return await get_pocs(limit, cve_id)
