@@ -213,7 +213,7 @@ const startScan = async () => {
       error.value = response.data?.error || 'An unknown error occurred.';
     }
   } catch (err) {
-    error.value = `An error occurred: ${err.message}`;
+    error.value = `An error occurred: ${err instanceof Error ? err.message : String(err)}`;
   } finally {
     loading.value = false;
   }

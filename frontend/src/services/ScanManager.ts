@@ -41,11 +41,9 @@ class ScanManager {
 
 
   static async stopScan(scanID: string): Promise<any> {
-    const deviceid = Device.getId();
-    const uri = 'backend/scan/stop';  // Proxy path configured in vite.config.js
+    const uri = '/backend/scan/stop';  // Proxy path configured in vite.config.js
     const formData = {
       scanId: scanID,
-      client: (await deviceid).identifier,
     };
     try {
       const response = await axios.post(uri, formData, {
@@ -65,10 +63,9 @@ class ScanManager {
   }
 
   static async deleteScan(scanID: string): Promise<any> {
-    const uri = 'backend/scan/delete';  // Proxy path configured in vite.config.js
+    const uri = '/backend/scan/delete';  // Proxy path configured in vite.config.js
     const formData = {
-      target: scanID,
-      client: this.getDeviceId(),
+      scanId: scanID,
     };
     try {
       const response = await axios.post(uri, formData, {
@@ -78,7 +75,7 @@ class ScanManager {
         },
       });
       console.log(response.data);
-      return { status: "SUCCESS" };
+      return response.data;
     } catch (error) {
       throw new Error('Cannot connect to server ' + error + '');
     }
@@ -138,32 +135,14 @@ class ScanManager {
   }
   
   static async getClientScans(): Promise<any> {
-    // Get the device ID
     const deviceId = await Device.getId();
-
-    // Define the SQL query using the device ID
-    const query = `
-    SELECT * 
-    FROM tbl_scan_instance
-    WHERE name LIKE '%${deviceId.identifier}%';
-  `;
-
-    // Encode the query and device ID as URL parameters
-    const url = `osint/query?query=${encodeURIComponent(query.trim())}`;
-
     try {
-      // Send a GET request to the SQL query endpoint
-      const response = await axios.get(url);
-
-      // Return the server's response
-      return response.data;
-
+      const response = await axios.get('/backend/scan/list', { params: { client: deviceId.identifier } });
+      return response.data.events ?? [];
     } catch (error: any) {
-      // Throw a meaningful error message
       throw new Error(`Cannot connect to server: ${error.message}`);
     }
   }
-
 }
 
 export default ScanManager;
