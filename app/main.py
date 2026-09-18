@@ -7,7 +7,9 @@ from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker, declarative_base
 from fastapi_versioning import VersionedFastAPI, version
 
-from api.endpoints import security, assistant, spiderfoot
+
+from api.endpoints import security, assistant, bbot, threat_intelligence, spiderfoot
+
 
 # Initialize FastAPI app
 app = FastAPI(
@@ -38,6 +40,8 @@ app.add_middleware(
 app.include_router(security.router)
 app.include_router(assistant.router)
 app.include_router(spiderfoot.router)
+app.include_router(bbot.router)
+app.include_router(threat_intelligence.router)
 
 app = VersionedFastAPI(app, version_format='{major}')
 
