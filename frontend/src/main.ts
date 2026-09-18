@@ -9,6 +9,7 @@ import { getAnalytics } from "firebase/analytics";
 import router from './router';
 
 import { IonicVue } from '@ionic/vue';
+import { LocalNotifications } from '@capacitor/local-notifications';
 
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/vue/css/core.css';
@@ -49,7 +50,11 @@ const app = createApp(Public)
   .use(IonicVue)
   .use(router);
 
-router.isReady().then(() => {
+router.isReady().then(async () => {
+  await LocalNotifications.addListener('localNotificationActionPerformed', event => {
+    const path = event.notification.extra?.path;
+    if (typeof path === 'string' && path.startsWith('/reports/')) router.push(path);
+  });
   app.mount('#public');
 });
 
