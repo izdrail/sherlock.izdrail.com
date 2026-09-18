@@ -93,6 +93,7 @@
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue';
+import { useRoute } from 'vue-router';
 import {
   IonPage,
   IonHeader,
@@ -151,7 +152,8 @@ export default defineComponent({
     IonToast,
   },
   setup() {
-    const inputUrl = ref('');
+    const route = useRoute();
+    const inputUrl = ref(typeof route.query.url === 'string' ? route.query.url : '');
     const isLoading = ref(false);
     const result = ref<UrlCheckRecord | null>(null);
     const showToast = ref(false);

@@ -42,6 +42,7 @@ import '@ionic/vue/css/palettes/dark.system.css';
 /* Theme variables */
 import './theme/variables.css';
 import Public from "@/Public.vue";
+import { MobileIntegrationService } from '@/services/MobileIntegrationService';
 
 
 
@@ -50,6 +51,7 @@ const app = createApp(Public)
   .use(router);
 
 router.isReady().then(() => {
+  MobileIntegrationService.register(router);
   app.mount('#public');
 });
 
