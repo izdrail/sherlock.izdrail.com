@@ -123,6 +123,11 @@ export default defineComponent({
           icon: fileTrayStackedSharp,
         },
         {
+          title: 'Exploited CVEs',
+          url: '/vulnerabilities',
+          icon: warningOutline,
+        },
+        {
           title: 'Alerts',
           url: '/alerts',
           icon: alertCircle,
