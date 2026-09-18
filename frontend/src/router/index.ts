@@ -27,6 +27,10 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import('../views/reports/Graph.vue'),
   },
   {
+    path: '/vulnerabilities',
+    component: () => import('@/views/alerts/Vulnerabilities.vue'),
+  },
+  {
     path: '/alerts',
     component: () => import('@/views/alerts/Alerts.vue'),
     children: [
