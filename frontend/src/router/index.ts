@@ -6,6 +6,7 @@ const routes: Array<RouteRecordRaw> = [
     path: '',
     redirect: '/assistant/dashboard'
   },
+  { path: '/spiderfoot', component: () => import('@/views/integrations/SpiderFootConsole.vue') },
   {
     path: '/investigate',
     component: () => import('../views/investigate.vue')
