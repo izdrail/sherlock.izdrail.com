@@ -56,6 +56,7 @@ import {
   footstepsOutline,
   shieldCheckmarkOutline,
   warningOutline,
+  terminalOutline,
   chatbubblesOutline,
   linkOutline,
   keyOutline,
@@ -111,6 +112,11 @@ export default defineComponent({
           title: 'Useful Links',
           url: '/assistant/useful-links',
           icon: bookOutline,
+        },
+        {
+          title: 'BBOT Scans',
+          url: '/bbot',
+          icon: terminalOutline,
         },
         {
           title: 'Investigate',
