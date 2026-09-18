@@ -164,6 +164,7 @@
 import { ref } from 'vue';
 import Papa from 'papaparse'; // Install with: npm install papaparse
 import ScanManager from '../services/ScanManager';
+import { ScanNotificationService } from '@/services/ScanNotificationService';
 import {
   IonButton, IonButtons, IonCard, IonCardContent, 
   IonCardHeader, IonCardTitle, IonCol, IonContent, 
@@ -209,6 +210,7 @@ const startScan = async () => {
     if (response.success === "SUCCESS") {
       scanID.value = response.scanID;
       error.value = '';
+      await ScanNotificationService.watch(response.scanID, target.value);
     } else {
       error.value = response.data?.error || 'An unknown error occurred.';
     }
