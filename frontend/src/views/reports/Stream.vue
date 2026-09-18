@@ -4,9 +4,12 @@
       <ion-buttons slot="start">
         <ion-menu-button color="primary"></ion-menu-button>
       </ion-buttons>
-      <ion-title>
-        Case Number - {{ scanID }}
-      </ion-title>
+      <ion-title>Case Number - {{ scanID }}</ion-title>
+      <ion-buttons slot="end">
+        <ion-button aria-label="Download JSON" @click="downloadJson">JSON</ion-button>
+        <ion-button aria-label="Download CSV" @click="downloadCsv">CSV</ion-button>
+        <ion-button aria-label="Share report" @click="shareReport"><ion-icon :icon="shareOutline" /></ion-button>
+      </ion-buttons>
     </ion-toolbar>
   </ion-header>
 
@@ -81,10 +84,13 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, defineAsyncComponent } from 'vue';
+import { shareOutline } from 'ionicons/icons';
 import { useRouter } from 'vue-router';
 import ScanManager from '../../services/ScanManager';
 import DefaultEventCard from './cards/DefaultEventCard.vue';
 import EmailAddrCompromisedEventCard from './cards/EmailAddrCompromisedEventCard.vue';
+import ScanStorageService from '@/services/ScanStorageService';
+import { ReportExportService } from '@/services/ReportExportService';
 
 // Type definition for scan events
 interface ScanEvent {
@@ -179,18 +185,31 @@ const getEvents = async () => {
     
     if (response.status === 200 && response.events) {
       results.value = response.events;
+      await ScanStorageService.saveScan('', scanID.value, response.events);
     } else {
       throw new Error(response.message || 'Failed to fetch events');
     }
   } catch (error) {
     console.error('Error fetching events:', error);
-    showErrorCard.value = true;
-    errorMessage.value = error instanceof Error 
-      ? error.message 
-      : 'An unexpected error occurred while fetching findings.';
+    const cached = await ScanStorageService.getScan(scanID.value);
+    if (cached?.scanData) {
+      results.value = cached.scanData;
+      errorMessage.value = 'Showing the last report saved on this device.';
+    } else {
+      showErrorCard.value = true;
+      errorMessage.value = error instanceof Error ? error.message : 'An unexpected error occurred while fetching findings.';
+    }
   } finally {
     isLoading.value = false;
   }
+};
+
+const downloadJson = () => ReportExportService.download(ReportExportService.json(scanID.value, results.value), `sherlock-${scanID.value}.json`);
+const downloadCsv = () => ReportExportService.download(ReportExportService.csv(results.value as unknown as Record<string, unknown>[]), `sherlock-${scanID.value}.csv`);
+const shareReport = async () => {
+  const url = `${window.location.origin}/reports/${scanID.value}`;
+  if (navigator.share) await navigator.share({ title: `Sherlock case ${scanID.value}`, text: `${results.value.length} findings`, url });
+  else await navigator.clipboard.writeText(url);
 };
 
 const retryFetch = () => {
