@@ -25,7 +25,7 @@ class FakeScanner:
         self.status = "RUNNING"
         yield FakeEvent()
         self.status = "FINISHED"
-    async def stop(self): self.status = "ABORTED"; self.stopped = True
+    async def async_stop(self): self.status = "ABORTED"; self.stopped = True
 
 
 class BBotManagerTest(unittest.IsolatedAsyncioTestCase):
@@ -37,6 +37,15 @@ class BBotManagerTest(unittest.IsolatedAsyncioTestCase):
         await BBotManager._scans[created["id"]].task
         self.assertEqual(BBotManager.get(created["id"]).status, "FINISHED")
         self.assertEqual(BBotManager.events(created["id"])["events"][0]["type"], "DNS_NAME")
+
+    @patch("services.bbot_manager.Scanner", FakeScanner)
+    async def test_stops_running_scan(self):
+        created = await BBotManager.start("example.com")
+        scan = BBotManager._scans[created["id"]]
+        scan.scanner = FakeScanner()
+        scan.status = "RUNNING"
+        stopped = await BBotManager.stop(created["id"])
+        self.assertEqual(stopped["status"], "ABORTED")
 
     async def test_lists_allowed_presets(self):
         self.assertIn("subdomain-enum", BBotManager.ALLOWED_PRESETS)

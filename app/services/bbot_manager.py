@@ -87,7 +87,7 @@ class BBotManager:
     async def stop(cls, scan_id: str) -> Dict[str, Any]:
         scan = cls.get(scan_id)
         if scan.scanner and not scan.scanner.stopped:
-            await scan.scanner.stop()
+            await scan.scanner.async_stop()
             scan.status = scan.scanner.status
         elif scan.task and not scan.task.done():
             scan.task.cancel()
