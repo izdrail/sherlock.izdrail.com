@@ -33,6 +33,12 @@
                       fill="outline"
                       placeholder="Domain, IP, email, username..."
                     ></ion-input>
+                    <ion-select v-model="preset" label="Scan preset" label-placement="stacked" fill="outline" class="ion-margin-top">
+                      <ion-select-option value="all">Full investigation</ion-select-option>
+                      <ion-select-option value="footprint">Footprint</ion-select-option>
+                      <ion-select-option value="investigate">Investigate</ion-select-option>
+                      <ion-select-option value="passive">Passive only</ion-select-option>
+                    </ion-select>
                   </ion-col>
                   <ion-col size="12" size-md="1">
                     <ion-button 
@@ -171,7 +177,7 @@ import {
   IonMenuButton, IonPage, IonRow, IonSpinner, 
   IonTitle, IonToolbar, IonModal, IonFab, 
   IonFabButton, IonProgressBar, IonList, 
-  IonListHeader, IonItem, IonLabel, IonBadge
+  IonListHeader, IonItem, IonLabel, IonBadge, IonSelect, IonSelectOption
 } from '@ionic/vue';
 import { 
   searchOutline, 
@@ -181,6 +187,7 @@ import {
 
 // Existing state variables
 const target = ref('');
+const preset = ref<'all' | 'footprint' | 'investigate' | 'passive'>('all');
 const loading = ref(false);
 const error = ref('');
 const scanID = ref('');
@@ -205,7 +212,7 @@ const startScan = async () => {
 
   try {
     // Perform a new scan
-    const response = await ScanManager.performScan(target.value);
+    const response = await ScanManager.performScan(target.value, preset.value);
     if (response.success === "SUCCESS") {
       scanID.value = response.scanID;
       error.value = '';

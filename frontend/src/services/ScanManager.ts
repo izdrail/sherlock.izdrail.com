@@ -15,12 +15,13 @@ class ScanManager {
     return id.identifier;
   }
 
-  static async performScan(target: string): Promise<any> {
+  static async performScan(target: string, preset: 'all' | 'footprint' | 'investigate' | 'passive' = 'all'): Promise<any> {
     const deviceid = Device.getId();
     const uri = 'backend/scan';  // Proxy path configured in vite.config.js
     const formData = {
       target: target,
       client: (await deviceid).identifier,
+      usecase: preset,
     };
     try {
       const response = await axios.post(uri, formData, {

@@ -11,6 +11,15 @@
   </ion-header>
 
   <ion-content>
+    <ion-card v-if="!isLoading && results.length" class="ion-margin">
+      <ion-card-header><ion-card-title>Risk summary</ion-card-title></ion-card-header>
+      <ion-card-content>
+        <ion-chip v-for="level in ['critical', 'high', 'medium', 'low']" :key="level" :color="level === 'critical' || level === 'high' ? 'danger' : level === 'medium' ? 'warning' : 'success'">
+          {{ level }}: {{ results.filter(item => FindingService.severity(item) === level).length }}
+        </ion-chip>
+        <p class="ion-margin-top"><strong>Next action:</strong> {{ FindingService.remediation(results[0]) }}</p>
+      </ion-card-content>
+    </ion-card>
     <!-- Skeleton Loader while fetching -->
     <div v-if="isLoading" class="ion-padding">
       <ion-card v-for="n in 3" :key="n" class="ion-margin-bottom">
@@ -85,6 +94,7 @@ import { useRouter } from 'vue-router';
 import ScanManager from '../../services/ScanManager';
 import DefaultEventCard from './cards/DefaultEventCard.vue';
 import EmailAddrCompromisedEventCard from './cards/EmailAddrCompromisedEventCard.vue';
+import { FindingService } from '@/services/FindingService';
 
 // Type definition for scan events
 interface ScanEvent {
@@ -178,7 +188,7 @@ const getEvents = async () => {
     const response = await ScanManager.getEvents(scanID.value);
     
     if (response.status === 200 && response.events) {
-      results.value = response.events;
+      results.value = FindingService.deduplicate(response.events) as ScanEvent[];
     } else {
       throw new Error(response.message || 'Failed to fetch events');
     }
